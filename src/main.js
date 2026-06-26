@@ -1,14 +1,16 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 
 import App from './App.vue'
-import router from './router'
+import { registerBoot } from '@boot'
 
-const app = createApp(App)
+async function bootstrap() {
+  const app = createApp(App)
 
-app.use(createPinia())
-app.use(router)
+  await registerBoot(app)
 
-app.mount('#app')
+  app.mount('#app')
+}
+
+bootstrap()
