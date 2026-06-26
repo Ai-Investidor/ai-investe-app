@@ -1,4 +1,4 @@
-// src/boot/modules/01-pinia.js
+// src/boot/modules/pinia.js
 import { createPinia } from 'pinia'
 
 /**

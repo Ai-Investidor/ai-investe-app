@@ -4,25 +4,42 @@
  * Cada módulo em ./modules exporta como default uma função:
  *   (app) => void | Promise<void>
  *
- * Os módulos são carregados e executados em ordem alfabética do caminho,
- * então use prefixos numéricos (ex.: 01-pinia.js, 02-router.js) para
- * controlar a ordem de inicialização.
+ * A ordem de inicialização é definida pelo array `order` passado para
+ * `registerBoot`, usando o nome do arquivo (sem extensão).
  */
 const modules = import.meta.glob('./modules/*.js', { eager: true })
 
+/** Mapa { nome-do-arquivo: módulo } */
+const moduleMap = Object.fromEntries(
+  Object.entries(modules).map(([path, mod]) => {
+    const name = path.replace(/^\.\/modules\//, '').replace(/\.js$/, '')
+    return [name, mod]
+  }),
+)
+
 /**
- * Registra (executa) todos os módulos de boot na aplicação Vue.
+ * Registra (executa) os módulos de boot na aplicação Vue.
  * @param {import('vue').App} app
+ * @param {string[]} [order] Nomes dos módulos (sem extensão) na ordem de execução.
+ *   Os não listados aqui são executados depois, em ordem alfabética.
  * @returns {Promise<void>}
  */
-export async function registerBoot(app) {
-  for (const path of Object.keys(modules).sort()) {
+export async function registerBoot(app, order = []) {
+  const remaining = Object.keys(moduleMap).filter((name) => !order.includes(name))
+  const sequence = [...order, ...remaining.sort()]
+
+  for (const name of sequence) {
     const mod = /** @type {{ default: (app: import('vue').App) => unknown }} */ (
-      modules[path]
+      moduleMap[name]
     )
 
+    if (!mod) {
+      console.warn(`[boot] módulo "${name}" não encontrado em ./modules.`)
+      continue
+    }
+
     if (typeof mod.default !== 'function') {
-      console.warn(`[boot] módulo "${path}" não possui export default como função.`)
+      console.warn(`[boot] módulo "${name}" não possui export default como função.`)
       continue
     }
 

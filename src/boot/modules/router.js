@@ -1,4 +1,4 @@
-// src/boot/modules/02-router.js
+// src/boot/modules/router.js
 import router from '@/router'
 
 /**
