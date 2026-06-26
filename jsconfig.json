@@ -4,7 +4,7 @@
       "@/*": ["./src/*"],
       "@assets/*": ["./src/assets/*"],
       "@boot/*": ["./src/boot/*"],
-      "@components/*": ["./src/components/*"],
+      "@components/*": ["./src/components/ui/*"],
       "@composables/*": ["./src/composables/*"],
       "@constants/*": ["./src/constants/*"],
       "@layout/*": ["./src/layout/*"],

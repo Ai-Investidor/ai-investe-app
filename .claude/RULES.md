@@ -105,12 +105,14 @@ Se um `<span>` filho não tem text-style próprio no design, herda do nó-pai ma
 
 **Regra:** SEMPRE usar os aliases do `jsconfig.json`. NUNCA caminhos relativos.
 
+> ⚠️ `@components` aponta SÓ pra `src/components/ui` (kit shadcn-vue). Componentes próprios fora do kit (ícones em `src/components/icons/`, componentes reutilizáveis do projeto) são importados via `@/components/...` (`@` = `src`).
+
 | Alias            | Caminho             |
 | ---------------- | ------------------- |
 | `@/*`            | `src/*`             |
 | `@assets/*`      | `src/assets/*`      |
 | `@boot/*`        | `src/boot/*`        |
-| `@components/*`  | `src/components/*`  |
+| `@components/*`  | `src/components/ui/*` (kit shadcn-vue) |
 | `@composables/*` | `src/composables/*` |
 | `@constants/*`   | `src/constants/*`   |
 | `@layout/*`      | `src/layout/*`      |
@@ -126,14 +128,14 @@ Se um `<span>` filho não tem text-style próprio no design, herda do nó-pai ma
 ❌ Errado:
 
 ```js
-import Button from "../../components/Button.vue";
+import { Button } from "../../components/ui/button";
 import { useAuth } from "../composables/useAuth";
 ```
 
 ✅ Certo:
 
 ```js
-import Button from "@components/Button.vue";
+import { Button } from "@components/button"; // kit shadcn-vue (src/components/ui)
 import { useAuth } from "@composables/useAuth";
 ```
 
@@ -435,7 +437,7 @@ src/pages/HomeHero.vue      ← seção solta dentro de pages/ (vai em views/)
 src/pages/Home.vue          ← a página (registrada no router)
 src/views/home/Hero.vue     ← seção da página Home
 src/layout/DefaultLayout.vue ← shell com <RouterView />
-src/components/Button.vue    ← componente reutilizável
+src/components/ui/button/Button.vue    ← componente reutilizável
 ```
 
 ```vue
@@ -558,7 +560,7 @@ import phoneRaw from "@assets/icons/contato/phone.svg?raw";
 
 ```vue
 <script setup>
-import IconPhone from "@components/icons/IconPhone.vue";
+import IconPhone from "@/components/icons/IconPhone.vue";
 </script>
 
 <template>
@@ -730,7 +732,7 @@ const routes = [
 import { defineAsyncComponent } from "vue";
 
 const GraficoPesado = defineAsyncComponent(
-  () => import("@components/GraficoPesado.vue"),
+  () => import("@/components/GraficoPesado.vue"),
 );
 </script>
 

@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,13 +12,14 @@ export default defineConfig({
     vue(),
     vueJsx(),
     vueDevTools(),
+    tailwindcss(),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
       '@boot': fileURLToPath(new URL('./src/boot', import.meta.url)),
-      '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/components/ui', import.meta.url)),
       '@composables': fileURLToPath(new URL('./src/composables', import.meta.url)),
       '@constants': fileURLToPath(new URL('./src/constants', import.meta.url)),
       '@layout': fileURLToPath(new URL('./src/layout', import.meta.url)),

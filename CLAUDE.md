@@ -40,14 +40,13 @@ N3 (~300 tokens × 3): Read no máximo 3 notas completas
 
 ### Gatilhos de carga (path → categoria)
 
-- `src/components/Navbar/**`, `MobileMenu*` → `navbar`
-- `tailwind.css`, `tailwind.config.js`, classes utilitárias novas → `tokens`
+- `src/components/ui/**` (shadcn-vue), extração de componente, refactor → `components`
+- `src/layout/**`, navbar / menu mobile, `position: fixed`, container, page shell → `navbar`, `layout`
+- `src/assets/tailwind.css`, `src/assets/base.css`, `src/assets/main.css` (Tailwind v4 CSS-first, sem `tailwind.config.js`), classes utilitárias novas → `tokens`
 - SVG inline, `<path>`, `<svg>` → `icons`, `tokens`
 - `<a href=`, headings, `aria-*` → `semantica`
 - `gsap`, `useAnimations`, `data-animate` → `gsap`
 - breakpoints `max-md:`/`max-lg:` → `responsive`
-- extração de componente, refactor → `components`
-- `position: fixed`, container, page shell → `layout`
 
 ### Operações
 
