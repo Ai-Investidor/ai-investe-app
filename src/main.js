@@ -1,16 +1,16 @@
-import './assets/main.css'
+import "./assets/main.css";
 
-import { createApp } from 'vue'
+import { createApp } from "vue";
 
-import App from './App.vue'
-import { registerBoot } from '@boot'
+import App from "./App.vue";
+import { registerBoot } from "@boot";
 
 async function bootstrap() {
-  const app = createApp(App)
+  const app = createApp(App);
 
-  await registerBoot(app, ['pinia', 'router'])
+  await registerBoot(app, ["pinia", "router", "lenis"]);
 
-  app.mount('#app')
+  app.mount("#app");
 }
 
-bootstrap()
+bootstrap();

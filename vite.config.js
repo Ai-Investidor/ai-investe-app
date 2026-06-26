@@ -20,6 +20,7 @@ export default defineConfig({
       '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
       '@composables': fileURLToPath(new URL('./src/composables', import.meta.url)),
       '@constants': fileURLToPath(new URL('./src/constants', import.meta.url)),
+      '@layout': fileURLToPath(new URL('./src/layout', import.meta.url)),
       '@lib': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
       '@plugins': fileURLToPath(new URL('./src/plugins', import.meta.url)),
@@ -27,6 +28,7 @@ export default defineConfig({
       '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
       '@stores': fileURLToPath(new URL('./src/stores', import.meta.url)),
       '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
+      '@views': fileURLToPath(new URL('./src/views', import.meta.url)),
     },
   },
 })
