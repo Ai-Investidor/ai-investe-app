@@ -3,7 +3,7 @@
 ## Stack
 
 - **Framework**: Vue 3 + Vite
-- **Estilo**: Tailwind CSS com CSS variables para cores
+- **Estilo**: Tailwind CSS com CSS variables para cores e shadcn-vue para componentes UI
 - **Deploy**: Netlify
 - **Package manager**: bun (preferir ao npm/pnpm)
 - **Linguagem**: português brasileiro pra conteúdo e conversa com o dev; inglês pra código
