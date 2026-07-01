@@ -1,0 +1,39 @@
+:root {
+	/* shadcn-vue OKLCH vars — dark theme (matches Figma AI-Invest design) */
+	--radius: 0.5rem; /* 8px – Figma "rounded-lg"/input radius; sm=4/md=6/lg=8/xl=12 all confirmed on-screen */
+
+	--background: oklch(0.1435 0.0018 196.96); /* #090a0a */
+	--foreground: oklch(1 0 0); /* #ffffff */
+
+	--primary: oklch(0.9452 0.2194 118.05); /* #e1ff06 */
+	--primary-foreground: oklch(0 0 0);
+
+	--secondary: oklch(0.3404 0.0226 218.97); /* #2b3b40 */
+	--secondary-foreground: oklch(1 0 0);
+
+	--muted: oklch(0.2178 0 0); /* #1a1a1a */
+	--muted-foreground: oklch(0.5555 0 0); /* #737373 */
+
+	--accent: oklch(0.9452 0.2194 118.05); /* #e1ff06 */
+	--accent-foreground: oklch(0 0 0);
+
+	--destructive: oklch(0.6358 0.2088 25.41); /* #ef4343 */
+	--destructive-foreground: oklch(1 0 0);
+
+	--border: oklch(0.3404 0.0226 218.97); /* #2b3b40 */
+	--input: oklch(0.2178 0 0); /* #1a1a1a */
+	--ring: oklch(0.9452 0.2194 118.05); /* #e1ff06 */
+
+	--card: oklch(0 0 0);
+	--card-foreground: oklch(1 0 0);
+
+	--popover: oklch(0.1448 0 0); /* #0a0a0a */
+	--popover-foreground: oklch(1 0 0);
+}
+
+.dark {
+	--border: oklch(0.3404 0.0226 218.97);
+	--background: oklch(0.1435 0.0018 196.96);
+	--foreground: oklch(1 0 0);
+	--ring: oklch(0.9452 0.2194 118.05);
+}

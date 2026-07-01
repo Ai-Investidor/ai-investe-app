@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "penpot": {
+      "url": "http://localhost:9001/mcp/stream?userToken=eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2R0NNIn0.FWGvqZ96bYvvo2O3X3WAeZMIxs1uMXTOKFRWVTdsmkXe62UnR1qlPA.uqUj0ukcdiTNiOsD.MPKfNzJSTVErA0Z1ly9m_qxh2DLmf9usovieslrllX6feNeuMZ4MFsxS7F3XbfRKBLkM01OaljxY8j0ZLKTHOdDjpwFFN5rYrmQ2tAJ2ncJ9tOX1AEacAbbEtAupXDq4eooSIEsPtyDibYjdQYydLCTXAG5vj0p-Vx8FDQpo3yziBLYy1jDC_dxFVCyk6H8LTl9kQlM-HT6a.OjIDmPdhFUupwMD-0C-dUg"
+    },
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    }
+  }
+}
