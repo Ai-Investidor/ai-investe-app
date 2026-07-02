@@ -18,12 +18,17 @@ const sidebarItems = [
         class="flex w-spacing-nav-offset flex-col items-center gap-8 bg-surface pt-3 pb-6 px-3"
     >
         <!-- Logo -->
-        <img
-            :src="logo"
-            alt="Logo da aplicação AI Invest"
-            class="h-auto w-10"
-            loading="eager"
-        />
+        <RouterLink
+            to="/"
+            class="transition-opacity duration-200 hover:opacity-80"
+        >
+            <img
+                :src="logo"
+                alt="Logo da aplicação AI Invest"
+                class="h-auto w-10"
+                loading="eager"
+            />
+        </RouterLink>
 
         <!-- Navigation Items -->
         <nav class="flex flex-col gap-4">
@@ -37,7 +42,7 @@ const sidebarItems = [
                         'flex h-10 w-10 items-center justify-center rounded-lg',
                         'border border-card-border',
                         'bg-gradient-to-br from-surface to-surface-2',
-                        'hover:border-primary hover:shadow-lg',
+                        'hover:border-primary hover:shadow-lg hover:cursor-pointer',
                         'transition-colors duration-200',
                         'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
                     )

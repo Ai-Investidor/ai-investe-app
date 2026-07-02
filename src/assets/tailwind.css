@@ -47,8 +47,18 @@
     --tracking-caption: 0.18px; /* legendas pequenas — plano do perfil (42:13004) */
 
     /* ─── Bordas translúcidas (chat empty state, 42:12903) ─── */
-    --color-card-border: rgba(64, 64, 64, 0.25); /* borda dos banners/botões-ícone com gradiente */
-    --color-input-border: rgba(226, 232, 240, 0.15); /* borda dos inputs (busca, chat) */
+    --color-card-border: rgba(
+        64,
+        64,
+        64,
+        0.25
+    ); /* borda dos banners/botões-ícone com gradiente */
+    --color-input-border: rgba(
+        226,
+        232,
+        240,
+        0.15
+    ); /* borda dos inputs (busca, chat) */
     --color-btn-light: #f1f5f9; /* fundo dos botões claros (Buscar, enviar) */
 
     /* ─── Semantic spacing tokens (non-standard values from Figma) ─── */
@@ -102,6 +112,11 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* ─── Layout utilities ─── */
+@utility page-container {
+    @apply flex-1 w-full size-full p-3;
 }
 
 /* ─── Text styles — Chat/Layout (docs/build-manifest-chat.md) ─── */
