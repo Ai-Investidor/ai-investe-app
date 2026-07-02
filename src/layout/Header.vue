@@ -1,7 +1,11 @@
 <script setup>
 import Home from "@/components/icons/Home.vue";
-import { Input } from "@components/input";
-import { Button } from "@components/button";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from "@components/input-group";
 import { Avatar, AvatarFallback } from "@components/avatar";
 </script>
 
@@ -22,19 +26,22 @@ import { Avatar, AvatarFallback } from "@components/avatar";
             </nav>
 
             <!-- Search Input + Button -->
-            <div class="flex w-[386px] gap-2">
-                <Input
+            <InputGroup class="w-[386px] bg-app-bg border-input-border">
+                <InputGroupInput
                     type="search"
                     placeholder="Pesquisar histórico"
-                    class="flex-1 h-9 bg-app-bg text-paragraph-3 placeholder:text-muted-foreground border-input-border"
+                    class="text-paragraph-3 placeholder:text-muted-foreground"
                 />
-                <Button
-                    type="button"
-                    class="h-9 px-3 bg-btn-light text-black text-paragraph-4 hover:bg-opacity-90 rounded-lg shrink-0"
-                >
-                    Buscar
-                </Button>
-            </div>
+                <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                        type="button"
+                        size="sm"
+                        class="bg-btn-light text-black text-paragraph-4 hover:bg-opacity-90 rounded-lg"
+                    >
+                        Buscar
+                    </InputGroupButton>
+                </InputGroupAddon>
+            </InputGroup>
 
             <!-- Profile Section -->
             <div

@@ -1,6 +1,10 @@
 <script setup>
-import { Button } from "@components/button";
-import { Input } from "@components/input";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+} from "@components/input-group";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
@@ -77,18 +81,23 @@ const suggestions = [
     </div>
 
     <!-- Input with button -->
-    <div class="flex items-center gap-2 w-[541px] max-md:w-full bg-app-bg border border-input-border rounded-lg px-6 py-2 shadow-xs">
-      <Input
+    <InputGroup
+      class="gap-2 w-[541px] max-md:w-full h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
+    >
+      <InputGroupInput
         type="text"
         placeholder="Fale com nossa IA..."
-        class="flex-1 bg-transparent border-0 text-paragraph-3 text-white/55 placeholder:text-white/55 focus:outline-none focus:ring-0 shadow-none"
+        class="text-paragraph-3 text-white/55 placeholder:text-white/55"
       />
-      <Button
-        class="bg-btn-light hover:bg-btn-light/90 text-black rounded-lg px-3 py-1.5 text-paragraph-4 min-h-auto h-auto"
-      >
-        ?
-      </Button>
-    </div>
+      <InputGroupAddon align="inline-end" class="pr-0">
+        <InputGroupButton
+          size="sm"
+          class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
+        >
+          ?
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
 
     <!-- Disclaimer -->
     <p class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui">
