@@ -29,11 +29,12 @@
     --font-poppins: "Poppins", sans-serif;
     --font-abeezee: "ABeeZee", sans-serif;
     --font-display: "Barques", serif;
+    --font-inter: "Inter", sans-serif;
 
     /* ─── Font sizes (from Figma type usage) ─── */
     /* xs / sm / 2xl / 5xl match Tailwind defaults; auth-heading/hero are custom */
     --text-auth-heading: 1.625rem; /* 26px – "Bem vindo de volta" */
-    --text-hero: 2.1875rem; /* 35px – "Como posso te ajudar hoje?" (9:5246) */
+    --text-hero: 2.1875rem; /* 35px – "Como posso te ajudar hoje?" (9:5246, 42:12905) */
 
     /* ─── Line heights ─── */
     --leading-display: 1.19; /* hero + large titles (48px → 57px) */
@@ -42,6 +43,13 @@
     /* ─── Letter spacing ─── */
     --tracking-ui: 0.04px; /* SF Pro body text */
     --tracking-display: 2.15px; /* label / swatch display */
+    --tracking-label: 0.07px; /* botões, breadcrumb, perfil (42:12937, 42:12996) */
+    --tracking-caption: 0.18px; /* legendas pequenas — plano do perfil (42:13004) */
+
+    /* ─── Bordas translúcidas (chat empty state, 42:12903) ─── */
+    --color-card-border: rgba(64, 64, 64, 0.25); /* borda dos banners/botões-ícone com gradiente */
+    --color-input-border: rgba(226, 232, 240, 0.15); /* borda dos inputs (busca, chat) */
+    --color-btn-light: #f1f5f9; /* fundo dos botões claros (Buscar, enviar) */
 
     /* ─── Semantic spacing tokens (non-standard values from Figma) ─── */
     --spacing-nav-offset: 5.5rem; /* 88px – left nav column */
@@ -94,4 +102,92 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* ─── Text styles — Chat/Layout (docs/build-manifest-chat.md) ─── */
+@utility text-headline-1 {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: var(--text-hero);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-headline-1-strong {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-hero);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-paragraph-1 {
+    /* subtítulo do chat, descrição do card, disclaimer */
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 0.75rem;
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-paragraph-2 {
+    /* título do card de sugestão */
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-paragraph-3 {
+    /* placeholder dos inputs de busca/chat */
+    font-family: var(--font-inter);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: normal;
+}
+
+@utility text-paragraph-4 {
+    /* texto de botão — Buscar, enviar */
+    font-family: var(--font-inter);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: normal;
+    letter-spacing: var(--tracking-label);
+}
+
+@utility text-paragraph-5 {
+    /* breadcrumb ativo — "Home Chat" */
+    font-family: var(--font-abeezee);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-label);
+}
+
+@utility text-paragraph-6 {
+    /* separador do breadcrumb — "/" (substitui Geist por font-sans) */
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-label);
+}
+
+@utility text-paragraph-7 {
+    /* nome do perfil — "Frederico" */
+    font-family: var(--font-lato);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-label);
+}
+
+@utility text-paragraph-8 {
+    /* plano do perfil — "Plano X" */
+    font-family: var(--font-lato);
+    font-weight: 400;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-caption);
 }

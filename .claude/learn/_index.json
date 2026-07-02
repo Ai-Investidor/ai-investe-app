@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-07-02T03:13:21.651Z",
+  "total": 1,
+  "categories": {
+    "tokens": [
+      {
+        "slug": "figma-decorative-image-blend-mode",
+        "path": "tokens/figma-decorative-image-blend-mode.md",
+        "title": "Imagem decorativa do Figma precisa de mix-blend-mode, não opacity",
+        "tags": [
+          "images",
+          "css"
+        ],
+        "recurrence": "baixa",
+        "scope": "generic"
+      }
+    ]
+  },
+  "tags": {
+    "css": [
+      "figma-decorative-image-blend-mode"
+    ],
+    "images": [
+      "figma-decorative-image-blend-mode"
+    ]
+  }
+}

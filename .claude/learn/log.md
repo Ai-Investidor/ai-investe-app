@@ -6,3 +6,5 @@ Operações: `ingest` (criar/atualizar nota), `lint` (passagem do `/dream`), `re
 Útil pro agente: `rg "^## \[" .claude/learn/log.md | tail -10` mostra atividade recente em uma chamada.
 
 ---
+
+## [2026-07-02] ingest | figma-decorative-image-blend-mode — created
