@@ -1,5 +1,6 @@
 <script setup>
 import Home from "@/components/icons/Home.vue";
+import MenuFold from "@/components/icons/MenuFold.vue";
 import {
     InputGroup,
     InputGroupAddon,
@@ -12,18 +13,30 @@ import { Avatar, AvatarFallback } from "@components/avatar";
 <template>
     <header class="h-[60px] bg-app-bg px-3 py-0">
         <div class="flex h-full items-center justify-between gap-6">
-            <!-- Breadcrumb -->
-            <nav class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-x-10">
                 <button
                     type="button"
-                    aria-label="Ir para Home"
-                    class="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    aria-label="Abrir menu"
+                    class="flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
                 >
-                    <Home class="h-4 w-4" aria-hidden="true" />
+                    <MenuFold class="size-6" aria-hidden="true" />
                 </button>
-                <span class="text-paragraph-6 text-muted-foreground">/</span>
-                <span class="text-paragraph-5 text-white">Home Chat</span>
-            </nav>
+
+                <!-- Breadcrumb -->
+                <nav class="flex items-center gap-2 shrink-0">
+                    <button
+                        type="button"
+                        aria-label="Ir para Home"
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    >
+                        <Home class="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <span class="text-paragraph-6 text-muted-foreground"
+                        >/</span
+                    >
+                    <span class="text-paragraph-5 text-white">Home Chat</span>
+                </nav>
+            </div>
 
             <!-- Search Input + Button -->
             <InputGroup class="w-[386px] bg-app-bg border-input-border">
