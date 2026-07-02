@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-02T10:12:03.145Z",
-  "total": 2,
+  "generated_at": "2026-07-02T10:35:37.956Z",
+  "total": 3,
   "categories": {
     "layout": [
       {
@@ -26,12 +26,28 @@
         ],
         "recurrence": "baixa",
         "scope": "generic"
+      },
+      {
+        "slug": "tailwind-merge-custom-text-utility-conflict",
+        "path": "tokens/tailwind-merge-custom-text-utility-conflict.md",
+        "title": "cn()/tailwind-merge apaga classe de cor quando existe @utility text-* custom com mesmo prefixo",
+        "tags": [
+          "tailwind",
+          "css",
+          "colors"
+        ],
+        "recurrence": "media",
+        "scope": "project"
       }
     ]
   },
   "tags": {
+    "colors": [
+      "tailwind-merge-custom-text-utility-conflict"
+    ],
     "css": [
-      "figma-decorative-image-blend-mode"
+      "figma-decorative-image-blend-mode",
+      "tailwind-merge-custom-text-utility-conflict"
     ],
     "images": [
       "figma-decorative-image-blend-mode"
@@ -41,6 +57,9 @@
     ],
     "naming-convention": [
       "page-view-prefix-naming"
+    ],
+    "tailwind": [
+      "tailwind-merge-custom-text-utility-conflict"
     ]
   }
 }

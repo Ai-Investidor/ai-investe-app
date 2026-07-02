@@ -38,7 +38,7 @@ import { Avatar, AvatarFallback } from "@components/avatar";
 
             <!-- Profile Section -->
             <div
-                class="flex items-center w-[183px] gap-[17px] py-[10px] shrink-0"
+                class="flex items-center justify-end w-[183px] gap-[17px] py-[10px] shrink-0"
             >
                 <div class="flex flex-col items-end">
                     <p class="text-paragraph-7 text-white leading-tight">

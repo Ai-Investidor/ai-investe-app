@@ -9,3 +9,4 @@ Operações: `ingest` (criar/atualizar nota), `lint` (passagem do `/dream`), `re
 
 ## [2026-07-02] ingest | figma-decorative-image-blend-mode — created
 ## [2026-07-02] ingest | page-view-prefix-naming — created
+## [2026-07-02] ingest | tailwind-merge-custom-text-utility-conflict — created
