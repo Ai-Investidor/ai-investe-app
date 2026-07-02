@@ -7,7 +7,7 @@ import {
     InputGroupButton,
     InputGroupInput,
 } from "@components/input-group";
-import { Avatar, AvatarFallback } from "@components/avatar";
+import UserProfile from "@/components/UserProfile/UserProfile.vue";
 </script>
 
 <template>
@@ -57,27 +57,7 @@ import { Avatar, AvatarFallback } from "@components/avatar";
             </InputGroup>
 
             <!-- Profile Section -->
-            <div
-                class="flex items-center justify-end w-[183px] gap-[17px] py-[10px] shrink-0"
-            >
-                <div class="flex flex-col items-end">
-                    <p class="text-paragraph-7 text-white leading-tight">
-                        Frederico
-                    </p>
-                    <p
-                        class="text-paragraph-8 text-muted-foreground leading-tight"
-                    >
-                        Plano X
-                    </p>
-                </div>
-                <Avatar class="h-8 w-8">
-                    <AvatarFallback
-                        class="bg-primary text-black text-sm font-medium"
-                    >
-                        F
-                    </AvatarFallback>
-                </Avatar>
-            </div>
+            <UserProfile name="Frederico" plan="Plano X" initial="F" />
         </div>
     </header>
 </template>
