@@ -1,6 +1,6 @@
 <script setup>
 import chatBg from "@assets/images/chat/chat-bg.webp";
-import Chat from "@views/Chat/Chat.vue";
+import ViewChat from "@views/Chat/ViewChat.vue";
 </script>
 
 <template>
@@ -22,7 +22,7 @@ import Chat from "@views/Chat/Chat.vue";
                 />
             </div>
 
-            <Chat />
+            <ViewChat />
         </div>
     </div>
 </template>

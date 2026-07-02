@@ -1,7 +1,20 @@
 {
-  "generated_at": "2026-07-02T03:13:21.651Z",
-  "total": 1,
+  "generated_at": "2026-07-02T10:12:03.145Z",
+  "total": 2,
   "categories": {
+    "layout": [
+      {
+        "slug": "page-view-prefix-naming",
+        "path": "layout/page-view-prefix-naming.md",
+        "title": "Arquivos de página e view precisam do prefixo Page/View no nome",
+        "tags": [
+          "layout",
+          "naming-convention"
+        ],
+        "recurrence": "alta",
+        "scope": "project"
+      }
+    ],
     "tokens": [
       {
         "slug": "figma-decorative-image-blend-mode",
@@ -22,6 +35,12 @@
     ],
     "images": [
       "figma-decorative-image-blend-mode"
+    ],
+    "layout": [
+      "page-view-prefix-naming"
+    ],
+    "naming-convention": [
+      "page-view-prefix-naming"
     ]
   }
 }

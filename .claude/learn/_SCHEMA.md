@@ -54,6 +54,7 @@ tags:
   # layout
   - layout
   - responsive
+  - naming-convention
 ```
 
 ## Enums

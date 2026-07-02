@@ -11,7 +11,7 @@ const router = createRouter({
         {
           path: "",
           name: "chat",
-          component: () => import("@pages/Chat.vue"),
+          component: () => import("@pages/PageChat.vue"),
         },
       ],
     },
