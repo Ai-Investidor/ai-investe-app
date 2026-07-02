@@ -9,6 +9,7 @@ import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
+import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
 
 const suggestions = [
 	{
@@ -56,28 +57,13 @@ const suggestions = [
 
     <!-- Suggestion cards grid -->
     <div class="grid grid-cols-2 max-md:grid-cols-1 gap-5 w-[541px] max-md:w-full">
-      <button
+      <SuggestionCard
         v-for="suggestion in suggestions"
         :key="suggestion.id"
-        class="group flex flex-col gap-2 items-start p-[15px] rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer text-left"
-      >
-        <!-- Icon -->
-        <component
-          :is="suggestion.icon"
-          class="w-4 h-4 text-white flex-shrink-0"
-          aria-hidden="true"
-        />
-
-        <!-- Card content -->
-        <div class="flex flex-col gap-2 flex-1">
-          <h3 class="text-paragraph-2 text-white">
-            {{ suggestion.title }}
-          </h3>
-          <p class="text-paragraph-1 text-white/75">
-            {{ suggestion.description }}
-          </p>
-        </div>
-      </button>
+        :icon="suggestion.icon"
+        :title="suggestion.title"
+        :description="suggestion.description"
+      />
     </div>
 
     <!-- Input with button -->
