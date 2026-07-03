@@ -1,56 +1,58 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-const sessions = ref([
-  { id: "1", title: "BYD, ativos e seu potencial de valorização" },
-  { id: "2", title: "Melhores opções de investimento para 2026" },
-  { id: "3", title: "A majore, esta é uma análise de mercado" },
-  { id: "4", title: "O médio ticket das operações recentes" },
-  { id: "5", title: "Petrobras fecha parceria estratégica" },
-  { id: "6", title: "Contrato milionário assinado essa semana" },
-  { id: "7", title: "Elon Musk foi destaque nas notícias" },
-  { id: "1", title: "BYD, ativos e seu potencial de valorização" },
-  { id: "2", title: "Melhores opções de investimento para 2026" },
-  { id: "3", title: "A majore, esta é uma análise de mercado" },
-  { id: "4", title: "O médio ticket das operações recentes" },
-  { id: "5", title: "Petrobras fecha parceria estratégica" },
-  { id: "6", title: "Contrato milionário assinado essa semana" },
-  { id: "7", title: "Elon Musk foi destaque nas notícias" },
-  { id: "1", title: "BYD, ativos e seu potencial de valorização" },
-  { id: "2", title: "Melhores opções de investimento para 2026" },
-  { id: "3", title: "A majore, esta é uma análise de mercado" },
-  { id: "4", title: "O médio ticket das operações recentes" },
-  { id: "5", title: "Petrobras fecha parceria estratégica" },
-  { id: "6", title: "Contrato milionário assinado essa semana" },
-  { id: "7", title: "Elon Musk foi destaque nas notícias" },
-  { id: "1", title: "BYD, ativos e seu potencial de valorização" },
-  { id: "2", title: "Melhores opções de investimento para 2026" },
-  { id: "3", title: "A majore, esta é uma análise de mercado" },
-  { id: "4", title: "O médio ticket das operações recentes" },
-  { id: "5", title: "Petrobras fecha parceria estratégica" },
-  { id: "6", title: "Contrato milionário assinado essa semana" },
-  { id: "7", title: "Elon Musk foi destaque nas notícias" },
-  { id: "1", title: "BYD, ativos e seu potencial de valorização" },
-  { id: "2", title: "Melhores opções de investimento para 2026" },
-  { id: "3", title: "A majore, esta é uma análise de mercado" },
-  { id: "4", title: "O médio ticket das operações recentes" },
-  { id: "5", title: "Petrobras fecha parceria estratégica" },
-  { id: "6", title: "Contrato milionário assinado essa semana" },
-  { id: "7", title: "Elon Musk foi destaque nas notícias" },
-]);
+const titles = [
+  "BYD, ativos e seu potencial de valorização",
+  "Melhores opções de investimento para 2026",
+  "A majore, esta é uma análise de mercado",
+  "O médio ticket das operações recentes",
+  "Petrobras fecha parceria estratégica",
+  "Contrato milionário assinado essa semana",
+  "Elon Musk foi destaque nas notícias",
+];
+
+const sessions = ref(
+  Array.from({ length: 5 }, () => titles).flat().map((title, index) => ({
+    id: String(index + 1),
+    title,
+    pinned: false,
+  })),
+);
 
 const activeSessionId = ref(null);
+
+const sortedSessions = computed(() =>
+  [...sessions.value].sort((a, b) => Number(b.pinned) - Number(a.pinned)),
+);
 
 function selectSession(id) {
   activeSessionId.value = id;
 }
 
 function createSession() {
-  const session = { id: crypto.randomUUID(), title: "Nova interação" };
+  const session = { id: crypto.randomUUID(), title: "Nova interação", pinned: false };
   sessions.value.unshift(session);
   activeSessionId.value = session.id;
   return session;
 }
 
+function togglePinSession(id) {
+  const session = sessions.value.find((s) => s.id === id);
+  if (session) session.pinned = !session.pinned;
+}
+
+function deleteSession(id) {
+  sessions.value = sessions.value.filter((s) => s.id !== id);
+  if (activeSessionId.value === id) activeSessionId.value = null;
+}
+
 export function useChatSessions() {
-  return { sessions, activeSessionId, selectSession, createSession };
+  return {
+    sessions,
+    sortedSessions,
+    activeSessionId,
+    selectSession,
+    createSession,
+    togglePinSession,
+    deleteSession,
+  };
 }

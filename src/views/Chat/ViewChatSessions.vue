@@ -1,9 +1,17 @@
 <script setup>
 import { Button } from "@components/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@components/dropdown-menu";
 import { ScrollArea } from "@components/scroll-area";
 import { useChatSessions } from "@composables/useChatSessions";
 import { cn } from "@lib/utils";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
+import MoreVertical from "@/components/icons/MoreVertical.vue";
 import Plus from "@/components/icons/Plus.vue";
 
 defineOptions({ inheritAttrs: false });
@@ -16,8 +24,14 @@ const props = defineProps({
     },
 });
 
-const { sessions, activeSessionId, selectSession, createSession } =
-    useChatSessions();
+const {
+    sortedSessions,
+    activeSessionId,
+    selectSession,
+    createSession,
+    togglePinSession,
+    deleteSession,
+} = useChatSessions();
 </script>
 
 <template>
@@ -44,7 +58,11 @@ const { sessions, activeSessionId, selectSession, createSession } =
                     aria-hidden="true"
                     class="absolute left-[7px] top-2 bottom-2 border-l border-dashed border-white/15"
                 />
-                <li v-for="session in sessions" :key="session.id">
+                <li
+                    v-for="session in sortedSessions"
+                    :key="session.id"
+                    class="group/row relative z-10 flex items-center gap-1"
+                >
                     <button
                         type="button"
                         :aria-current="
@@ -52,7 +70,7 @@ const { sessions, activeSessionId, selectSession, createSession } =
                         "
                         :class="
                             cn(
-                                'group relative z-10 flex items-center gap-2 w-full h-9 text-left hover:cursor-pointer',
+                                'group flex flex-1 min-w-0 items-center gap-2 h-9 text-left hover:cursor-pointer',
                             )
                         "
                         @click="selectSession(session.id)"
@@ -81,6 +99,34 @@ const { sessions, activeSessionId, selectSession, createSession } =
                             {{ session.title }}
                         </span>
                     </button>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                            <button
+                                type="button"
+                                aria-label="Mais opções"
+                                class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
+                            >
+                                <MoreVertical class="size-4" aria-hidden="true" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                                class="hover:cursor-pointer"
+                                @click="togglePinSession(session.id)"
+                            >
+                                {{ session.pinned ? "Desafixar" : "Fixar" }}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                variant="destructive"
+                                class="hover:cursor-pointer"
+                                @click="deleteSession(session.id)"
+                            >
+                                Deletar
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </li>
             </ul>
         </ScrollArea>
