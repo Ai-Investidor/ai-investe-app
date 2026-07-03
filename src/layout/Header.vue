@@ -8,6 +8,9 @@ import {
     InputGroupInput,
 } from "@components/input-group";
 import UserProfile from "@/components/UserProfile/UserProfile.vue";
+import { useChatSessionsPanel } from "@composables/useChatSessionsPanel";
+
+const { isOpen, togglePanel } = useChatSessionsPanel();
 </script>
 
 <template>
@@ -16,8 +19,11 @@ import UserProfile from "@/components/UserProfile/UserProfile.vue";
             <div class="flex items-center gap-x-10">
                 <button
                     type="button"
-                    aria-label="Abrir menu"
+                    :aria-label="isOpen ? 'Fechar menu' : 'Abrir menu'"
+                    :aria-expanded="isOpen"
+                    aria-controls="chat-sessions-panel"
                     class="flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    @click="togglePanel"
                 >
                     <MenuFold class="size-6" aria-hidden="true" />
                 </button>

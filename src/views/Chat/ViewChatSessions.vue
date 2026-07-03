@@ -9,6 +9,8 @@ import {
 } from "@components/dropdown-menu";
 import { ScrollArea } from "@components/scroll-area";
 import { useChatSessions } from "@composables/useChatSessions";
+import { useChatSessionsPanel } from "@composables/useChatSessionsPanel";
+import { prefersReducedMotion } from "@lib/gsap";
 import { cn } from "@lib/utils";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
@@ -32,12 +34,22 @@ const {
     togglePinSession,
     deleteSession,
 } = useChatSessions();
+
+const { isOpen } = useChatSessionsPanel();
 </script>
 
 <template>
     <nav
+        id="chat-sessions-panel"
         aria-label="Histórico de conversas"
-        :class="cn('flex flex-col w-[195px] h-full shrink-0', props.class)"
+        :class="
+            cn(
+                'flex flex-col h-full shrink-0 overflow-hidden',
+                !prefersReducedMotion && 'transition-[width] duration-300 ease-in-out',
+                isOpen ? 'w-[195px]' : 'w-0',
+                props.class,
+            )
+        "
     >
         <!-- Registrar Interação -->
         <Button
