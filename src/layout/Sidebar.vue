@@ -1,5 +1,5 @@
 <script setup>
-import { cn } from "@lib/utils";
+import { Button } from "@components/button";
 import MenuFold from "@/components/icons/MenuFold.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import Alerta from "@/components/icons/Alerta.vue";
@@ -32,45 +32,29 @@ const sidebarItems = [
 
         <!-- Navigation Items -->
         <nav class="flex flex-col gap-4">
-            <button
+            <Button
                 v-for="item in sidebarItems"
                 :key="item.id"
-                type="button"
+                variant="gradient"
+                size="icon-lg"
                 :aria-label="item.label"
-                :class="
-                    cn(
-                        'flex h-10 w-10 items-center justify-center rounded-lg',
-                        'border border-card-border',
-                        'bg-gradient-to-br from-surface to-surface-2',
-                        'hover:border-primary hover:shadow-lg hover:cursor-pointer',
-                        'transition-colors duration-200',
-                        'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
-                    )
-                "
+                class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
             >
                 <component :is="item.icon" class="h-4 w-4 text-primary" />
-            </button>
+            </Button>
         </nav>
 
         <!-- Spacer -->
         <div class="flex-1" />
 
         <!-- Toggle Menu Button -->
-        <button
-            type="button"
+        <Button
+            variant="gradient"
+            size="icon-lg"
             aria-label="Alternar menu de navegação"
-            :class="
-                cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg',
-                    'border border-card-border',
-                    'bg-gradient-to-br from-surface to-surface-2',
-                    'hover:border-primary hover:shadow-lg',
-                    'transition-colors duration-200',
-                    'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
-                )
-            "
+            class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
         >
             <MenuFold class="h-4 w-4 text-primary" />
-        </button>
+        </Button>
     </aside>
 </template>

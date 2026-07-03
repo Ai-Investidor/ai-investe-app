@@ -1,4 +1,5 @@
 <script setup>
+import { Button } from "@components/button";
 import { ScrollArea } from "@components/scroll-area";
 import { useChatSessions } from "@composables/useChatSessions";
 import { cn } from "@lib/utils";
@@ -25,26 +26,19 @@ const { sessions, activeSessionId, selectSession, createSession } =
         :class="cn('flex flex-col w-[195px] h-full shrink-0', props.class)"
     >
         <!-- Registrar Interação -->
-        <button
-            type="button"
-            :class="
-                cn(
-                    'flex items-center gap-2 h-8 px-[15px] rounded-md shrink-0',
-                    'border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black]',
-                    'hover:border-primary hover:shadow-lg hover:cursor-pointer transition-colors duration-200',
-                    'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
-                )
-            "
+        <Button
+            variant="gradient"
+            class="h-8 gap-2 px-[15px] shrink-0"
             @click="createSession"
         >
             <Plus class="size-4 text-primary shrink-0" aria-hidden="true" />
             <span class="text-paragraph-9 text-white whitespace-nowrap"
                 >Registrar Interação</span
             >
-        </button>
+        </Button>
 
         <!-- Lista de sessões -->
-        <ScrollArea class="flex-1 min-h-0">
+        <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
             <ul class="relative flex flex-col pt-2">
                 <div
                     aria-hidden="true"

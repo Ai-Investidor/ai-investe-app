@@ -5,11 +5,11 @@ import Header from "@layout/Header.vue";
 </script>
 
 <template>
-    <div class="flex min-h-screen bg-app-bg">
+    <div class="flex h-screen bg-app-bg overflow-hidden">
         <Sidebar />
-        <div class="flex flex-1 flex-col">
+        <div class="flex flex-1 flex-col min-h-0">
             <Header />
-            <main class="flex-1">
+            <main class="flex-1 min-h-0">
                 <RouterView />
             </main>
         </div>
