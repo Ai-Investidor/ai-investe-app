@@ -45,7 +45,7 @@ const suggestions = [
     <div class="text-center">
       <h1 class="text-headline-1 text-white whitespace-normal">
         Como posso te
-        <span class="text-headline-1-strong text-primary">ajudar</span>
+        <span class="text-headline-1-strong text-primary [text-shadow:0_0_24px_var(--color-primary)]">ajudar</span>
         hoje?
       </h1>
     </div>
