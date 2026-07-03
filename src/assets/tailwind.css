@@ -116,7 +116,7 @@
 
 /* ─── Layout utilities ─── */
 @utility page-container {
-    @apply flex-1 w-full size-full p-3;
+    @apply flex-1 w-full size-full;
 }
 
 /* ─── Text styles — Chat/Layout (docs/build-manifest-chat.md) ─── */
@@ -205,4 +205,12 @@
     font-size: 0.75rem;
     line-height: 1.5;
     letter-spacing: var(--tracking-caption);
+}
+
+@utility text-paragraph-9 {
+    /* botão "Registrar Interação" (26:11402) */
+    font-family: var(--font-poppins);
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 22px;
 }
