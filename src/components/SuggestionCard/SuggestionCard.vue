@@ -19,7 +19,9 @@ const props = defineProps({
         data-slot="suggestion-card"
         :class="
             cn(
-                'group flex flex-col gap-2 items-start p-[15px] rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer text-left',
+                'group flex gap-2 items-start p-[15px] rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] cursor-pointer text-left',
+                'hover:border-primary hover:shadow-lg transition-colors duration-200',
+                'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
                 props.class,
             )
         "
@@ -27,7 +29,7 @@ const props = defineProps({
         <!-- Icon -->
         <component
             :is="icon"
-            class="w-4 h-4 text-white flex-shrink-0"
+            class="w-4 h-4 text-primary flex-shrink-0"
             aria-hidden="true"
         />
 
