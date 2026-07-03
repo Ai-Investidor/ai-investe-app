@@ -8,28 +8,28 @@ import Plus from "@/components/icons/Plus.vue";
 defineOptions({ inheritAttrs: false });
 
 const props = defineProps({
-	class: {
-		type: [Boolean, null, String, Object, Array],
-		required: false,
-		skipCheck: true,
-	},
+    class: {
+        type: [Boolean, null, String, Object, Array],
+        required: false,
+        skipCheck: true,
+    },
 });
 
 const { sessions, activeSessionId, selectSession, createSession } =
-	useChatSessions();
+    useChatSessions();
 </script>
 
 <template>
     <nav
         aria-label="Histórico de conversas"
-        :class="cn('flex flex-col gap-6 w-[195px] h-full shrink-0', props.class)"
+        :class="cn('flex flex-col w-[195px] h-full shrink-0', props.class)"
     >
         <!-- Registrar Interação -->
         <button
             type="button"
             :class="
                 cn(
-                    'flex items-center gap-2 h-7 px-3 rounded-md shrink-0',
+                    'flex items-center gap-2 h-8 px-[15px] rounded-md shrink-0',
                     'border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black]',
                     'hover:border-primary hover:shadow-lg hover:cursor-pointer transition-colors duration-200',
                     'focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2',
@@ -37,13 +37,15 @@ const { sessions, activeSessionId, selectSession, createSession } =
             "
             @click="createSession"
         >
-            <Plus class="size-4 text-white shrink-0" aria-hidden="true" />
-            <span class="text-paragraph-9 text-white whitespace-nowrap">Registrar Interação</span>
+            <Plus class="size-4 text-primary shrink-0" aria-hidden="true" />
+            <span class="text-paragraph-9 text-white whitespace-nowrap"
+                >Registrar Interação</span
+            >
         </button>
 
         <!-- Lista de sessões -->
         <ScrollArea class="flex-1 min-h-0">
-            <ul class="relative flex flex-col">
+            <ul class="relative flex flex-col pt-2">
                 <div
                     aria-hidden="true"
                     class="absolute left-[7px] top-2 bottom-2 border-l border-dashed border-white/15"
@@ -51,7 +53,9 @@ const { sessions, activeSessionId, selectSession, createSession } =
                 <li v-for="session in sessions" :key="session.id">
                     <button
                         type="button"
-                        :aria-current="session.id === activeSessionId ? 'true' : undefined"
+                        :aria-current="
+                            session.id === activeSessionId ? 'true' : undefined
+                        "
                         :class="
                             cn(
                                 'group relative z-10 flex items-center gap-2 w-full h-9 text-left hover:cursor-pointer',
