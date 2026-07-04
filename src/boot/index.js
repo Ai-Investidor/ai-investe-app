@@ -1,4 +1,5 @@
 // src/boot/index.js
+export { supabase } from "./modules/supabase.js";
 
 /**
  * Cada módulo em ./modules exporta como default uma função:
