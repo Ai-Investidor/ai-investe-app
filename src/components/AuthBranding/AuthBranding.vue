@@ -1,10 +1,9 @@
 <script setup>
 import MaskOn from "@/components/icons/MaskOn.vue";
 
-// Items da lista com ícone — estrutura inline na seção, conforme R4b-extract
 const brandingItems = [
     { id: 1, label: "Análise de ativos" },
-    { id: 2, label: "Carteiras personalizadas" }, // item vazio, conforme manifesto (texto = espaço em branco no Figma)
+    { id: 2, label: "Carteiras personalizadas" },
     { id: 3, label: "Insights e alertas do mercado" },
 ];
 </script>

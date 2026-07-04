@@ -5,18 +5,22 @@ import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
 
-import cadastroArrow from "@assets/icons/login/cadastro-arrow.svg";
 import logoInvestLockup from "@assets/icons/login/logo-invest-lockup.svg";
 import googleG from "@assets/icons/login/google-g.svg";
 
+const fullName = ref("");
 const email = ref("");
+const phone = ref("");
 const password = ref("");
+const confirmPassword = ref("");
 
 const handleSubmit = () => {
-    // Implementação de envio do formulário será conectada ao backend
-    console.log("Form submitted:", {
+    console.log("Signup submitted:", {
+        fullName: fullName.value,
         email: email.value,
+        phone: phone.value,
         password: password.value,
+        confirmPassword: confirmPassword.value,
     });
 };
 </script>
@@ -24,10 +28,10 @@ const handleSubmit = () => {
 <template>
     <section
         class="absolute w-[461px] left-[var(--auth-form-center-x)] top-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:static max-lg:w-full max-lg:max-w-[461px] max-lg:translate-x-0 max-lg:translate-y-0"
-        aria-labelledby="login-form-heading"
+        aria-labelledby="signup-form-heading"
     >
         <div
-            class="rounded-md border px-item-gap py-[91px] bg-gradient-to-r from-black to-surface-2 border-card-border flex flex-col items-center justify-center gap-6 shadow-login-card max-lg:py-10 max-lg:px-5"
+            class="rounded-md border px-item-gap py-10 bg-gradient-to-r from-black to-surface-2 border-card-border flex flex-col items-center justify-center gap-6 shadow-login-card max-lg:py-10 max-lg:px-5"
         >
             <div class="flex justify-center">
                 <img
@@ -38,10 +42,10 @@ const handleSubmit = () => {
             </div>
 
             <h2
-                id="login-form-heading"
+                id="signup-form-heading"
                 class="text-auth-heading text-center text-white/55"
             >
-                Bem vindo de volta
+                Crie sua conta
             </h2>
 
             <div class="flex flex-col gap-section-gap w-full">
@@ -68,6 +72,20 @@ const handleSubmit = () => {
                     class="flex flex-col gap-section-gap w-full"
                 >
                     <div class="space-y-2">
+                        <Label for="fullName" class="sr-only">
+                            Nome completo
+                        </Label>
+                        <Input
+                            id="fullName"
+                            v-model="fullName"
+                            type="text"
+                            placeholder="Digite seu nome completo"
+                            autocomplete="name"
+                            class="rounded-full h-[42px] px-[13px] border-input-outline"
+                        />
+                    </div>
+
+                    <div class="space-y-2">
                         <Label for="email" class="sr-only"> E-mail </Label>
                         <Input
                             id="email"
@@ -80,52 +98,60 @@ const handleSubmit = () => {
                     </div>
 
                     <div class="space-y-2">
+                        <Label for="phone" class="sr-only"> Telefone </Label>
+                        <Input
+                            id="phone"
+                            v-model="phone"
+                            type="tel"
+                            placeholder="Digite seu telefone"
+                            autocomplete="tel"
+                            class="rounded-full h-[42px] px-[13px] border-input-outline"
+                        />
+                    </div>
+
+                    <div class="space-y-2">
                         <Label for="password" class="sr-only"> Senha </Label>
                         <Input
                             id="password"
                             v-model="password"
                             type="password"
                             placeholder="Digite sua senha"
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                             class="rounded-full h-[42px] px-[13px] border-input-outline"
                         />
                     </div>
 
-                    <div class="text-center">
-                        <span class="text-auth-link text-input-bg">
-                            Esqueceu a senha?
-                            <RouterLink
-                                to="/reset-password"
-                                class="text-auth-button text-white underline"
-                            >
-                                Clique aqui!
-                            </RouterLink>
-                        </span>
+                    <div class="space-y-2">
+                        <Label for="confirmPassword" class="sr-only">
+                            Repetir senha
+                        </Label>
+                        <Input
+                            id="confirmPassword"
+                            v-model="confirmPassword"
+                            type="password"
+                            placeholder="Confirme sua senha"
+                            autocomplete="new-password"
+                            class="rounded-full h-[42px] px-[13px] border-input-outline"
+                        />
                     </div>
 
-                    <div
-                        class="flex flex-row gap-item-gap w-full max-sm:flex-col"
+                    <Button
+                        type="submit"
+                        class="w-full h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
                     >
-                        <Button
-                            type="submit"
-                            class="flex-1 h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
-                        >
-                            Acessar Conta
-                        </Button>
+                        Criar conta
+                    </Button>
 
-                        <Button
-                            :as="RouterLink"
-                            to="/auth/cadastro"
-                            class="flex-1 justify-center h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
-                        >
-                            <span>Faça seu cadastro</span>
-                            <img
-                                :src="cadastroArrow"
-                                alt=""
-                                class="size-7"
-                                aria-hidden="true"
-                            />
-                        </Button>
+                    <div class="text-center">
+                        <span class="text-auth-link text-input-bg">
+                            Já tem uma conta?
+                            <RouterLink
+                                to="/auth/login"
+                                class="text-auth-button text-white underline"
+                            >
+                                Acesse aqui!
+                            </RouterLink>
+                        </span>
                     </div>
                 </form>
             </div>
