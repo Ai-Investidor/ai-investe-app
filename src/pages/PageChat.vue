@@ -27,7 +27,7 @@ import ViewChatSessions from "@views/Chat/ViewChatSessions.vue";
                 </div>
 
                 <div
-                    class="relative z-10 flex-1 flex flex-col items-center justify-center gap-[25px] overflow-y-auto"
+                    class="relative z-10 flex-1 flex flex-col items-center gap-[25px] overflow-y-auto"
                 >
                     <ViewChat />
                 </div>

@@ -40,7 +40,7 @@ const suggestions = [
 </script>
 
 <template>
-  <section class="relative z-10 flex flex-col items-center justify-center gap-[25px] px-6 py-12">
+  <section class="relative z-10 flex flex-col items-center justify-center my-auto gap-[25px] px-6 py-12 max-md:gap-4 max-md:py-8">
     <!-- Hero title -->
     <div class="text-center">
       <h1 class="text-headline-1 text-white whitespace-normal">
