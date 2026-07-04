@@ -51,12 +51,12 @@ const suggestions = [
     </div>
 
     <!-- Subtitle -->
-    <p class="text-paragraph-1 text-white/75 text-center max-w-[541px]">
+    <p class="text-paragraph-1 text-white/75 text-center max-w-[clamp(541px,65%,720px)]">
       Sou seu assistente especializado em análise financeira e investimentos. Posso ajudar com análise de ativos, tendências de mercado e estratégias de investimento
     </p>
 
     <!-- Suggestion cards grid -->
-    <div class="grid grid-cols-2 max-md:grid-cols-1 gap-5 w-[541px] max-md:w-full">
+    <div class="grid grid-cols-2 max-md:grid-cols-1 gap-5 w-[clamp(541px,65%,720px)] max-md:w-full">
       <SuggestionCard
         v-for="suggestion in suggestions"
         :key="suggestion.id"
@@ -68,7 +68,7 @@ const suggestions = [
 
     <!-- Input with button -->
     <InputGroup
-      class="gap-2 w-[541px] max-md:w-full h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
+      class="gap-2 w-[clamp(541px,65%,720px)] max-md:w-full h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
     >
       <InputGroupInput
         type="text"
