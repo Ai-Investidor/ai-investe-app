@@ -105,7 +105,7 @@ function parseFigmaUrl(url) {
 function sanitizeName(name) {
   return (
     name
-      .replace(/[\/\\]/g, "-")
+      .replace(/[/\\]/g, "-")
       .replace(/\s+/g, "-")
       .replace(/[:,]/g, "-")
       .replace(/[^a-zA-Z0-9\-_]/g, "")

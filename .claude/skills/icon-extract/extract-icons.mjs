@@ -143,7 +143,7 @@ function findIconInstances(node, opts, results = []) {
 function sanitizeName(name) {
   return (
     name
-      .replace(/[\/\\]/g, "-")
+      .replace(/[/\\]/g, "-")
       .replace(/\s+/g, "-")
       .replace(/,/g, "-")
       .replace(/[^a-zA-Z0-9\-_]/g, "")
@@ -246,7 +246,7 @@ async function main() {
   const args = parseArgs();
 
   let fileKey = args["file-key"];
-  let nodeIds = [];
+  const nodeIds = [];
 
   if (args.url) {
     const parsed = parseFigmaUrl(args.url);
@@ -297,7 +297,7 @@ async function main() {
 
   // Step 2: Find icon INSTANCE nodes
   console.log(`🔎 Scanning for icon instances (${minSize}-${maxSize}px)...`);
-  let allIcons = [];
+  const allIcons = [];
 
   for (const [nodeId, nodeData] of Object.entries(nodesData.nodes || {})) {
     if (!nodeData?.document) {
@@ -370,7 +370,7 @@ async function main() {
         continue;
       }
       try {
-        let svg = await downloadUrl(url);
+        const svg = await downloadUrl(url);
         if (svg.includes("<Error>")) {
           console.warn(`   ⚠️ Expired URL for "${icon.safeName}"`);
           continue;

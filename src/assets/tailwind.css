@@ -13,6 +13,8 @@
     /* ─── Neutrals ─── */
     --color-input-bg: #f6f6f6;
     --color-on-light: #353232;
+    --color-input-outline: #d6d6d6; /* borda + placeholder dos campos de login (42:13155, 42:13156) */
+    --color-divider: #363636; /* linha divisória do card de login — style "Dark/dark-750" (42:13152) */
 
     /* ─── Semantic ─── */
     --color-success: #319f43;
@@ -35,6 +37,12 @@
     /* xs / sm / 2xl / 5xl match Tailwind defaults; auth-heading/hero are custom */
     --text-auth-heading: 1.625rem; /* 26px – "Bem vindo de volta" */
     --text-hero: 2.1875rem; /* 35px – "Como posso te ajudar hoje?" (9:5246, 42:12905) */
+    --text-auth-hero: 3rem; /* 48px – headline "Inteligência artificial..." (42:13175) */
+    --text-auth-subheading: 1.5rem; /* 24px – subtexto do painel de branding (42:13178) */
+    --text-auth-button: 0.875rem; /* 14px – "Continuar com Google" / "Clique aqui!" */
+    --text-auth-link: 0.875rem; /* 14px – "Esqueceu a senha?" */
+    --text-auth-input: 0.75rem; /* 12px – placeholder dos campos e-mail/senha */
+    --text-auth-cta: 0.875rem; /* 14px – "Faça seu cadastro" */
 
     /* ─── Line heights ─── */
     --leading-display: 1.19; /* hero + large titles (48px → 57px) */
@@ -60,6 +68,9 @@
         0.15
     ); /* borda dos inputs (busca, chat) */
     --color-btn-light: #f1f5f9; /* fundo dos botões claros (Buscar, enviar) */
+
+    /* ─── Sombras customizadas ─── */
+    --shadow-login-card: 0px 2px 0px #000000, 42px 49px 63.8px rgba(0, 0, 0, 0.25); /* card de login (42:13143) */
 
     /* ─── Semantic spacing tokens (non-standard values from Figma) ─── */
     --spacing-nav-offset: 5.5rem; /* 88px – left nav column */
@@ -117,6 +128,10 @@
 /* ─── Layout utilities ─── */
 @utility page-container {
     @apply flex-1 w-full size-full;
+}
+
+@utility shadow-login-card {
+    box-shadow: var(--shadow-login-card);
 }
 
 /* ─── Text styles — Chat/Layout (docs/build-manifest-chat.md) ─── */
@@ -222,4 +237,72 @@
     font-size: 1rem;
     line-height: normal;
     letter-spacing: var(--tracking-ui);
+}
+
+/* ─── Text styles — Auth/Login (docs/build-manifest-login.md) ─── */
+@utility text-auth-hero {
+    /* headline "Inteligência artificial..." — peso base (42:13175) */
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: var(--text-auth-hero);
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-auth-hero-strong {
+    /* palavra destacada "artificial" na headline (42:13176) */
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-auth-hero);
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-auth-subheading {
+    /* subtexto do painel de branding (42:13178) */
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: var(--text-auth-subheading);
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}
+
+@utility text-auth-heading {
+    /* "Bem vindo de volta" (42:13145) */
+    font-family: var(--font-lato);
+    font-weight: 400;
+    font-size: var(--text-auth-heading);
+    line-height: normal;
+}
+
+@utility text-auth-button {
+    /* "Continuar com Google" / "Clique aqui!" (42:13150, 42:13161) */
+    font-family: var(--font-lato);
+    font-weight: 700;
+    font-size: var(--text-auth-button);
+    line-height: normal;
+}
+
+@utility text-auth-link {
+    /* "Esqueceu a senha?" (42:13161) */
+    font-family: var(--font-lato);
+    font-weight: 400;
+    font-size: var(--text-auth-link);
+    line-height: normal;
+}
+
+@utility text-auth-input {
+    /* placeholder dos campos e-mail/senha (42:13156, 43:13506) */
+    font-family: var(--font-lato);
+    font-weight: 400;
+    font-size: var(--text-auth-input);
+    line-height: normal;
+}
+
+@utility text-auth-cta {
+    /* "Faça seu cadastro" (42:13158) */
+    font-family: var(--font-poppins);
+    font-weight: 500;
+    font-size: var(--text-auth-cta);
+    line-height: normal;
 }
