@@ -23,7 +23,7 @@ const handleSubmit = () => {
 
 <template>
     <section
-        class="absolute w-[461px] left-[calc(50%+264.5px)] top-[calc(50%+0.5px)] -translate-x-1/2 -translate-y-1/2 max-md:left-1/2 max-md:top-auto max-md:bottom-4 max-md:translate-y-0"
+        class="absolute w-[461px] left-[var(--auth-form-center-x)] top-1/2 -translate-x-1/2 -translate-y-1/2 max-md:left-1/2 max-md:top-auto max-md:bottom-4 max-md:translate-y-0 max-md:w-[min(461px,calc(100%-2rem))]"
         aria-labelledby="login-form-heading"
     >
         <div

@@ -11,10 +11,12 @@ const brandingItems = [
 
 <template>
     <!-- Split full-bleed: painel escuro à esquerda com conteúdo + retângulo primary à direita (absolute) -->
-    <section class="relative flex items-center w-full min-h-screen">
+    <section
+        class="relative flex items-center w-full min-h-screen max-w-[var(--auth-content-width)] max-md:max-w-none"
+    >
         <!-- Painel esquerdo com conteúdo -->
         <div
-            class="flex flex-col gap-layout-gap items-start justify-center pl-nav-offset py-10 w-full h-full max-w-[650px]"
+            class="flex flex-col gap-layout-gap items-start justify-center pl-nav-offset py-10 w-full h-full max-w-[650px] max-lg:max-w-none max-lg:pr-6"
         >
             <!-- Headline: "Inteligência artificial para seus investimentos" com "artificial" em primary -->
             <h1 class="text-auth-hero text-white">
@@ -33,7 +35,7 @@ const brandingItems = [
             </p>
 
             <!-- Lista de 3 itens com ícone mask-on (v-for inline) -->
-            <div class="flex gap-[2rem] max-w-[43rem]">
+            <div class="flex flex-wrap gap-8 max-w-[43rem] max-lg:max-w-full">
                 <div
                     v-for="item in brandingItems"
                     :key="item.id"

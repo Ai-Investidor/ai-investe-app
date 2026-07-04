@@ -77,6 +77,11 @@
     --spacing-layout-gap: 3.1875rem; /* 51px – main layout itemSpacing */
     --spacing-section-gap: 1.625rem; /* 26px – form section gap */
     --spacing-item-gap: 0.9375rem; /* 15px – form row gap */
+
+    /* Auth split layout — design ref 1920px (Figma 42:13035) */
+    --auth-panel-width: 35.9375%; /* 690/1920 — painel primary à direita */
+    --auth-content-width: 64.0625%; /* 1230/1920 — área escura à esquerda */
+    --auth-form-center-x: 63.776%; /* centro horizontal do card sobre a divisa */
 }
 
 @theme inline {
