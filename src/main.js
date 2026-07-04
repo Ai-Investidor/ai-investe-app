@@ -8,7 +8,7 @@ import { registerBoot } from "@boot";
 async function bootstrap() {
   const app = createApp(App);
 
-  await registerBoot(app, ["pinia", "supabase", "router", "lenis"]);
+  await registerBoot(app, ["pinia", "supabase", "axios", "router", "lenis"]);
 
   app.mount("#app");
 }

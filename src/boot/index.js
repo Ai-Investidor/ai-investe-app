@@ -1,4 +1,5 @@
 // src/boot/index.js
+export { api } from "./modules/axios.js";
 export { supabase } from "./modules/supabase.js";
 
 /**
