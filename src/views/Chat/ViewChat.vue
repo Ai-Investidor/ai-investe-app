@@ -1,15 +1,26 @@
 <script setup>
+import { ref } from "vue";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
 } from "@components/input-group";
+import { useChatSessions } from "@composables/useChatSessions";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
 import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
+
+const { sendMessage } = useChatSessions();
+
+const inputText = ref("");
+
+function handleSubmit() {
+	sendMessage(inputText.value);
+	inputText.value = "";
+}
 
 const suggestions = [
 	{
@@ -63,6 +74,7 @@ const suggestions = [
         :icon="suggestion.icon"
         :title="suggestion.title"
         :description="suggestion.description"
+        @click="sendMessage(suggestion.description)"
       />
     </div>
 
@@ -71,14 +83,17 @@ const suggestions = [
       class="gap-2 w-[clamp(541px,65%,720px)] max-md:w-full h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
     >
       <InputGroupInput
+        v-model="inputText"
         type="text"
         placeholder="Fale com nossa IA..."
         class="text-paragraph-3 text-white/55 placeholder:text-white/55"
+        @keydown.enter="handleSubmit"
       />
       <InputGroupAddon align="inline-end" class="pr-0">
         <InputGroupButton
           size="sm"
           class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
+          @click="handleSubmit"
         >
           ?
         </InputGroupButton>

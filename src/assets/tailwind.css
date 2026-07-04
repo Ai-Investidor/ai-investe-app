@@ -214,3 +214,12 @@
     font-size: 0.875rem;
     line-height: 22px;
 }
+
+@utility text-paragraph-10 {
+    /* corpo da mensagem do chat (44:13759, 44:13800) */
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: normal;
+    letter-spacing: var(--tracking-ui);
+}

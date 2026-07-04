@@ -1,0 +1,127 @@
+<script setup>
+import { ref } from "vue";
+import { Avatar, AvatarFallback } from "@components/avatar";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupInput,
+} from "@components/input-group";
+import { ScrollArea } from "@components/scroll-area";
+import { useChatSessions } from "@composables/useChatSessions";
+import Clock from "@/components/icons/Clock.vue";
+import FilePlus from "@/components/icons/FilePlus.vue";
+
+const { activeSession, sendMessage } = useChatSessions();
+
+const inputText = ref("");
+
+function handleSubmit() {
+    sendMessage(inputText.value);
+    inputText.value = "";
+}
+</script>
+
+<template>
+    <section
+        class="relative z-10 flex flex-col h-full w-full min-h-0 gap-[25px] px-6 py-6 max-md:px-4 max-md:py-4"
+    >
+        <h1 class="sr-only">Conversa com a IA</h1>
+
+        <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
+            <ul
+                class="flex flex-col gap-5 w-[clamp(541px,65%,720px)] max-md:w-full mx-auto py-4"
+            >
+                <li
+                    v-for="message in activeSession?.messages ?? []"
+                    :key="message.id"
+                    :class="[
+                        'flex gap-3 items-start',
+                        message.role === 'user'
+                            ? 'flex-row-reverse self-end'
+                            : 'self-start',
+                    ]"
+                >
+                    <Avatar class="size-8 shrink-0">
+                        <AvatarFallback
+                            v-if="message.role === 'assistant'"
+                            class="bg-primary text-black text-sm font-medium"
+                        >
+                            AI
+                        </AvatarFallback>
+                        <AvatarFallback
+                            v-else
+                            class="bg-secondary text-white text-sm font-medium"
+                        >
+                            F
+                        </AvatarFallback>
+                    </Avatar>
+
+                    <div
+                        :class="[
+                            'flex flex-col gap-3 max-w-[70%] max-md:max-w-[85%] border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] rounded-md px-[15px] py-[15px]',
+                            message.role === 'user'
+                                ? 'items-end'
+                                : 'items-start',
+                        ]"
+                    >
+                        <p
+                            :class="[
+                                'text-paragraph-10 text-white whitespace-pre-wrap',
+                                message.role === 'user'
+                                    ? 'text-right'
+                                    : 'text-left',
+                            ]"
+                        >
+                            {{ message.content }}
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <Clock
+                                class="size-4 text-white/55"
+                                aria-hidden="true"
+                            />
+                            <time
+                                class="text-paragraph-3 text-white/55"
+                                :datetime="message.time"
+                            >
+                                {{ message.time }}
+                            </time>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </ScrollArea>
+
+        <!-- Input with button -->
+        <InputGroup
+            class="gap-2 w-[clamp(541px,65%,720px)] max-md:w-full mx-auto h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 shrink-0 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
+        >
+            <InputGroupAddon align="inline-start">
+                <FilePlus class="size-4 text-white/55" aria-hidden="true" />
+            </InputGroupAddon>
+            <InputGroupInput
+                v-model="inputText"
+                type="text"
+                placeholder="Fale com nossa IA..."
+                class="text-paragraph-3 text-white/55 placeholder:text-white/55"
+                @keydown.enter="handleSubmit"
+            />
+            <InputGroupAddon align="inline-end" class="pr-0">
+                <InputGroupButton
+                    size="sm"
+                    class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
+                    @click="handleSubmit"
+                >
+                    ?
+                </InputGroupButton>
+            </InputGroupAddon>
+        </InputGroup>
+
+        <!-- Disclaimer -->
+        <p
+            class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui shrink-0 mx-auto"
+        >
+            AI invest é uma IA e pode cometer erros pode cometer erros.
+        </p>
+    </section>
+</template>
