@@ -16,7 +16,7 @@ const { toggle: toggleMobileSidebar } = useMobileSidebar();
 </script>
 
 <template>
-    <header class="h-[60px] bg-app-bg px-3 py-0">
+    <header class="h-[60px] bg-linear-135 from-app-bg to-surface px-3 py-0">
         <div class="flex h-full items-center justify-between gap-6 max-lg:gap-3">
             <div class="flex items-center gap-x-10 max-lg:gap-x-3">
                 <!-- Desktop: toggle do painel de sessões do chat -->
@@ -43,7 +43,7 @@ const { toggle: toggleMobileSidebar } = useMobileSidebar();
                 </button>
 
                 <!-- Breadcrumb -->
-                <nav class="max-md:hidden flex items-center gap-2 shrink-0">
+                <nav class="flex items-center gap-2 shrink-0">
                     <button
                         type="button"
                         aria-label="Ir para Home"
@@ -60,7 +60,7 @@ const { toggle: toggleMobileSidebar } = useMobileSidebar();
 
             <!-- Search Input + Button -->
             <InputGroup
-                class="w-[386px] max-lg:w-full max-lg:max-w-xs bg-app-bg border-input-border"
+                class="max-md:hidden w-[386px] max-lg:w-full max-lg:max-w-xs bg-app-bg border-input-border"
             >
                 <InputGroupInput
                     type="search"
