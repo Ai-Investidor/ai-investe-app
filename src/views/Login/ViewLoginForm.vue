@@ -95,7 +95,7 @@ const handleSubmit = () => {
                         <span class="text-auth-link text-input-bg">
                             Esqueceu a senha?
                             <RouterLink
-                                to="/reset-password"
+                                to="/auth/recuperar-senha"
                                 class="text-auth-button text-white underline"
                             >
                                 Clique aqui!

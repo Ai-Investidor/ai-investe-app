@@ -40,6 +40,11 @@ const router = createRouter({
           name: "signup",
           component: () => import("@pages/PageSignup.vue"),
         },
+        {
+          path: "recuperar-senha",
+          name: "recover-password",
+          component: () => import("@pages/PageRecover.vue"),
+        },
       ],
     },
   ],
