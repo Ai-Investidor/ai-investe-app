@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink, useRoute } from "vue-router";
 import { Button } from "@components/button";
 import MenuFold from "@/components/icons/MenuFold.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
@@ -6,11 +7,15 @@ import Alerta from "@/components/icons/Alerta.vue";
 import CardStackMinus from "@/components/icons/CardStackMinus.vue";
 import logo from "@assets/icons/layout/logo-investe_clean.svg";
 
+const route = useRoute();
+
 const sidebarItems = [
     { id: "chat", icon: ChatCircleDots, label: "Chat" },
     { id: "alerts", icon: Alerta, label: "Notificações" },
     { id: "cards", icon: CardStackMinus, label: "Carteiras" },
 ];
+
+const isActive = (id) => route.name === id;
 </script>
 
 <template>
@@ -35,12 +40,20 @@ const sidebarItems = [
             <Button
                 v-for="item in sidebarItems"
                 :key="item.id"
+                :as="RouterLink"
+                :to="{ name: item.id }"
                 variant="gradient"
                 size="icon-lg"
                 :aria-label="item.label"
+                :aria-current="isActive(item.id) ? 'page' : undefined"
                 class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
+                :class="isActive(item.id) && 'border-primary shadow-lg'"
             >
-                <component :is="item.icon" class="h-4 w-4 text-primary" />
+                <component
+                    :is="item.icon"
+                    class="h-4 w-4"
+                    :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
+                />
             </Button>
         </nav>
 

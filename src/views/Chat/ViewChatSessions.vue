@@ -45,7 +45,8 @@ const { isOpen } = useChatSessionsPanel();
         :class="
             cn(
                 'flex flex-col h-full shrink-0 overflow-hidden',
-                !prefersReducedMotion && 'transition-[width] duration-300 ease-in-out',
+                !prefersReducedMotion &&
+                    'transition-[width] duration-300 ease-in-out',
                 isOpen ? 'w-[195px]' : 'w-0',
                 props.class,
             )
@@ -119,7 +120,10 @@ const { isOpen } = useChatSessionsPanel();
                                 aria-label="Mais opções"
                                 class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
                             >
-                                <MoreVertical class="size-4" aria-hidden="true" />
+                                <MoreVertical
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -128,6 +132,13 @@ const { isOpen } = useChatSessionsPanel();
                                 @click="togglePinSession(session.id)"
                             >
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                class="hover:cursor-pointer"
+                                @click="togglePinSession(session.id)"
+                            >
+                                Editar
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem

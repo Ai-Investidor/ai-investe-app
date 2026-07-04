@@ -13,6 +13,16 @@ const router = createRouter({
           name: "chat",
           component: () => import("@pages/PageChat.vue"),
         },
+        {
+          path: "alertas",
+          name: "alerts",
+          component: () => import("@pages/PageAlertas.vue"),
+        },
+        {
+          path: "carteiras",
+          name: "cards",
+          component: () => import("@pages/PageCarteiras.vue"),
+        },
       ],
     },
   ],
