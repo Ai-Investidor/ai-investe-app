@@ -82,6 +82,15 @@
     --auth-panel-width: 35.9375%; /* 690/1920 — painel primary à direita */
     --auth-content-width: 64.0625%; /* 1230/1920 — área escura à esquerda */
     --auth-form-center-x: 63.776%; /* centro horizontal do card sobre a divisa */
+    --auth-form-half-width: 230.5px; /* metade da largura do card (461/2) */
+    --auth-form-center-viewport: 63.776vw; /* centro do card — vw p/ calc com px */
+    --auth-branding-content-max: min(
+        650px,
+        calc(
+            var(--auth-form-center-viewport) - var(--auth-form-half-width) -
+                var(--spacing-nav-offset) - 1rem
+        )
+    ); /* evita overlap do card com textos entre 1024–1299px */
 }
 
 @theme inline {

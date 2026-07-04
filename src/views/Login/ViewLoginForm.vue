@@ -23,13 +23,12 @@ const handleSubmit = () => {
 
 <template>
     <section
-        class="absolute w-[461px] left-[var(--auth-form-center-x)] top-1/2 -translate-x-1/2 -translate-y-1/2 max-md:left-1/2 max-md:top-auto max-md:bottom-4 max-md:translate-y-0 max-md:w-[min(461px,calc(100%-2rem))]"
+        class="absolute w-[461px] left-[var(--auth-form-center-x)] top-1/2 -translate-x-1/2 -translate-y-1/2 max-lg:static max-lg:w-full max-lg:max-w-[461px] max-lg:translate-x-0 max-lg:translate-y-0"
         aria-labelledby="login-form-heading"
     >
         <div
-            class="rounded-md border px-item-gap py-[91px] bg-gradient-to-r from-black to-surface-2 border-card-border flex flex-col items-center justify-center gap-6"
+            class="rounded-md border px-item-gap py-[91px] bg-gradient-to-r from-black to-surface-2 border-card-border flex flex-col items-center justify-center gap-6 shadow-login-card max-lg:py-10 max-lg:px-5"
         >
-            <!-- Logo -->
             <div class="flex justify-center">
                 <img
                     :src="logoInvestLockup"
@@ -38,7 +37,6 @@ const handleSubmit = () => {
                 />
             </div>
 
-            <!-- Headline -->
             <h2
                 id="login-form-heading"
                 class="text-auth-heading text-center text-white/55"
@@ -46,9 +44,7 @@ const handleSubmit = () => {
                 Bem vindo de volta
             </h2>
 
-            <!-- Grupo de Campos -->
             <div class="flex flex-col gap-section-gap w-full">
-                <!-- Google Button -->
                 <Button
                     variant="outline"
                     class="w-full py-4 h-[43px] rounded-full border-2 border-input-bg bg-transparent shadow-none hover:bg-transparent"
@@ -65,15 +61,12 @@ const handleSubmit = () => {
                     >
                 </Button>
 
-                <!-- Divider -->
                 <div class="border-t border-divider" />
 
-                <!-- Login Form -->
                 <form
                     @submit.prevent="handleSubmit"
                     class="flex flex-col gap-section-gap w-full"
                 >
-                    <!-- Email Field -->
                     <div class="space-y-2">
                         <Label for="email" class="sr-only"> E-mail </Label>
                         <Input
@@ -86,7 +79,6 @@ const handleSubmit = () => {
                         />
                     </div>
 
-                    <!-- Password Field -->
                     <div class="space-y-2">
                         <Label for="password" class="sr-only"> Senha </Label>
                         <Input
@@ -99,7 +91,6 @@ const handleSubmit = () => {
                         />
                     </div>
 
-                    <!-- Forgot Password Link -->
                     <div class="text-center">
                         <span class="text-auth-link text-input-bg">
                             Esqueceu a senha?
@@ -112,9 +103,9 @@ const handleSubmit = () => {
                         </span>
                     </div>
 
-                    <!-- Sign In & Sign Up Buttons -->
-                    <div class="flex flex-row gap-item-gap w-full">
-                        <!-- Acessar Conta: submit button -->
+                    <div
+                        class="flex flex-row gap-item-gap w-full max-sm:flex-col"
+                    >
                         <Button
                             type="submit"
                             class="flex-1 h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
@@ -122,7 +113,6 @@ const handleSubmit = () => {
                             Acessar Conta
                         </Button>
 
-                        <!-- Faça seu cadastro: navigation link -->
                         <Button
                             :as="RouterLink"
                             to="/cadastro"
