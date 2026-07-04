@@ -45,6 +45,11 @@ const router = createRouter({
           name: "recover-password",
           component: () => import("@pages/PageRecover.vue"),
         },
+        {
+          path: "nova-senha",
+          name: "reset-password",
+          component: () => import("@pages/PageResetPassword.vue"),
+        },
       ],
     },
   ],
