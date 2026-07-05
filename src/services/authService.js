@@ -11,6 +11,19 @@ export function authService() {
     return data;
   }
 
+  async function signUp({ email, password, fullName, phone }) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, phone },
+      },
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
   async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -37,6 +50,7 @@ export function authService() {
 
   return {
     signIn,
+    signUp,
     signInWithGoogle,
     signOut,
     getSession,

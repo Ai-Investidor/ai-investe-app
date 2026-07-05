@@ -1,23 +1,45 @@
 <script setup>
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { z } from "zod";
+
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@components/form";
+import { useAuth } from "@composables/useAuth.js";
+import { emailSchema, passwordSchema } from "@utils/validators.js";
 
 import cadastroArrow from "@assets/icons/login/cadastro-arrow.svg";
 import logoInvestLockup from "@assets/icons/login/logo-invest-lockup.svg";
 import googleG from "@assets/icons/login/google-g.svg";
 
-const email = ref("");
-const password = ref("");
+const router = useRouter();
+const { signIn, signInWithGoogle, isSigningIn } = useAuth();
 
-const handleSubmit = () => {
-    // Implementação de envio do formulário será conectada ao backend
-    console.log("Form submitted:", {
-        email: email.value,
-        password: password.value,
-    });
+const loginSchema = z.object({
+    email: emailSchema,
+    password: passwordSchema,
+});
+
+const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(loginSchema),
+});
+
+const onSubmit = handleSubmit(async (values) => {
+    const data = await signIn({ email: values.email, password: values.password });
+    if (!data) return;
+    router.push({ name: "chat" });
+});
+
+const handleGoogleSignIn = () => {
+    signInWithGoogle();
 };
 </script>
 
@@ -48,7 +70,8 @@ const handleSubmit = () => {
                 <Button
                     variant="outline"
                     class="w-full py-4 h-[43px] rounded-full border-2 border-input-bg bg-transparent shadow-none hover:bg-transparent"
-                    @click="() => {}"
+                    :disabled="isSigningIn"
+                    @click="handleGoogleSignIn"
                 >
                     <img
                         :src="googleG"
@@ -64,32 +87,40 @@ const handleSubmit = () => {
                 <div class="border-t border-divider" />
 
                 <form
-                    @submit.prevent="handleSubmit"
+                    @submit.prevent="onSubmit"
                     class="flex flex-col gap-section-gap w-full"
                 >
-                    <div class="space-y-2">
-                        <Label for="email" class="sr-only"> E-mail </Label>
-                        <Input
-                            id="email"
-                            v-model="email"
-                            type="email"
-                            placeholder="Digite seu e-mail"
-                            autocomplete="email"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="email">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only"> E-mail </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="email"
+                                    placeholder="Digite seu e-mail"
+                                    autocomplete="email"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label for="password" class="sr-only"> Senha </Label>
-                        <Input
-                            id="password"
-                            v-model="password"
-                            type="password"
-                            placeholder="Digite sua senha"
-                            autocomplete="current-password"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="password">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only"> Senha </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    placeholder="Digite sua senha"
+                                    autocomplete="current-password"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
                     <div class="text-center">
                         <span class="text-auth-link text-input-bg">
@@ -108,9 +139,10 @@ const handleSubmit = () => {
                     >
                         <Button
                             type="submit"
+                            :disabled="isSigningIn"
                             class="flex-1 h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
                         >
-                            Acessar Conta
+                            {{ isSigningIn ? "Entrando..." : "Acessar Conta" }}
                         </Button>
 
                         <Button

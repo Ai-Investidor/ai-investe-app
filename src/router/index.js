@@ -67,4 +67,16 @@ router.beforeEach(async (to) => {
   }
 });
 
+// A troca do `code` do PKCE pela sessão acontece de forma assíncrona dentro
+// do supabase-js. Na primeira navegação da SPA, o vue-router já captura a
+// URL com `?code=` presente e reescreve isso na barra de endereço depois que
+// o guard acima resolve — sobrescrevendo a limpeza que o supabase-js já fez.
+// Isso garante que o `code` some da URL de vez, sem afetar a sessão.
+router.afterEach((to) => {
+  if (to.query.code) {
+    const { code, ...rest } = to.query;
+    router.replace({ path: to.path, query: rest });
+  }
+});
+
 export default router;

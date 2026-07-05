@@ -1,27 +1,75 @@
 <script setup>
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { toast } from "vue-sonner";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { z } from "zod";
+
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@components/form";
+import { useAuth } from "@composables/useAuth.js";
+import {
+    emailSchema,
+    fullNameSchema,
+    passwordSchema,
+    phoneSchema,
+} from "@utils/validators.js";
 
 import logoInvestLockup from "@assets/icons/login/logo-invest-lockup.svg";
 import googleG from "@assets/icons/login/google-g.svg";
 
-const fullName = ref("");
-const email = ref("");
-const phone = ref("");
-const password = ref("");
-const confirmPassword = ref("");
+const router = useRouter();
+const { signUp, signInWithGoogle, isSigningIn, isSigningUp } = useAuth();
 
-const handleSubmit = () => {
-    console.log("Signup submitted:", {
-        fullName: fullName.value,
-        email: email.value,
-        phone: phone.value,
-        password: password.value,
-        confirmPassword: confirmPassword.value,
+const signupSchema = z
+    .object({
+        fullName: fullNameSchema,
+        email: emailSchema,
+        phone: phoneSchema,
+        password: passwordSchema,
+        confirmPassword: z
+            .string({ required_error: "Confirme sua senha" })
+            .min(1, "Confirme sua senha"),
+    })
+    .refine((values) => values.password === values.confirmPassword, {
+        message: "As senhas não coincidem",
+        path: ["confirmPassword"],
     });
+
+const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(signupSchema),
+});
+
+const onSubmit = handleSubmit(async (values) => {
+    const data = await signUp({
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        phone: values.phone,
+    });
+
+    if (!data) return;
+
+    if (data.session) {
+        router.push({ name: "chat" });
+        return;
+    }
+
+    toast.success(
+        "Conta criada! Verifique seu e-mail para confirmar o cadastro.",
+    );
+    router.push({ name: "login" });
+});
+
+const handleGoogleSignIn = () => {
+    signInWithGoogle();
 };
 </script>
 
@@ -52,7 +100,8 @@ const handleSubmit = () => {
                 <Button
                     variant="outline"
                     class="w-full py-4 h-[43px] rounded-full border-2 border-input-bg bg-transparent shadow-none hover:bg-transparent"
-                    @click="() => {}"
+                    :disabled="isSigningIn"
+                    @click="handleGoogleSignIn"
                 >
                     <img
                         :src="googleG"
@@ -68,78 +117,102 @@ const handleSubmit = () => {
                 <div class="border-t border-divider" />
 
                 <form
-                    @submit.prevent="handleSubmit"
+                    @submit.prevent="onSubmit"
                     class="flex flex-col gap-section-gap w-full"
                 >
-                    <div class="space-y-2">
-                        <Label for="fullName" class="sr-only">
-                            Nome completo
-                        </Label>
-                        <Input
-                            id="fullName"
-                            v-model="fullName"
-                            type="text"
-                            placeholder="Digite seu nome completo"
-                            autocomplete="name"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="fullName">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only">
+                                Nome completo
+                            </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="Digite seu nome completo"
+                                    autocomplete="name"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label for="email" class="sr-only"> E-mail </Label>
-                        <Input
-                            id="email"
-                            v-model="email"
-                            type="email"
-                            placeholder="Digite seu e-mail"
-                            autocomplete="email"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="email">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only"> E-mail </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="email"
+                                    placeholder="Digite seu e-mail"
+                                    autocomplete="email"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label for="phone" class="sr-only"> Telefone </Label>
-                        <Input
-                            id="phone"
-                            v-model="phone"
-                            type="tel"
-                            placeholder="Digite seu telefone"
-                            autocomplete="tel"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="phone">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only"> Telefone </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="tel"
+                                    placeholder="Digite seu telefone"
+                                    autocomplete="tel"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label for="password" class="sr-only"> Senha </Label>
-                        <Input
-                            id="password"
-                            v-model="password"
-                            type="password"
-                            placeholder="Digite sua senha"
-                            autocomplete="new-password"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField v-slot="{ componentField }" name="password">
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only"> Senha </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    placeholder="Digite sua senha"
+                                    autocomplete="new-password"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label for="confirmPassword" class="sr-only">
-                            Repetir senha
-                        </Label>
-                        <Input
-                            id="confirmPassword"
-                            v-model="confirmPassword"
-                            type="password"
-                            placeholder="Confirme sua senha"
-                            autocomplete="new-password"
-                            class="rounded-full h-[42px] px-[13px] border-input-outline"
-                        />
-                    </div>
+                    <FormField
+                        v-slot="{ componentField }"
+                        name="confirmPassword"
+                    >
+                        <FormItem class="space-y-2">
+                            <FormLabel class="sr-only">
+                                Repetir senha
+                            </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="password"
+                                    placeholder="Confirme sua senha"
+                                    autocomplete="new-password"
+                                    class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                            <FormMessage class="text-xs" />
+                        </FormItem>
+                    </FormField>
 
                     <Button
                         type="submit"
+                        :disabled="isSigningUp"
                         class="w-full h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
                     >
-                        Criar conta
+                        {{ isSigningUp ? "Criando conta..." : "Criar conta" }}
                     </Button>
 
                     <div class="text-center">

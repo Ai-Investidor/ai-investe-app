@@ -1,4 +1,5 @@
 <script setup>
+import { useRouter } from "vue-router";
 import Home from "@/components/icons/Home.vue";
 import MenuFold from "@/components/icons/MenuFold.vue";
 import {
@@ -8,11 +9,22 @@ import {
     InputGroupInput,
 } from "@components/input-group";
 import UserProfile from "@/components/UserProfile/UserProfile.vue";
+import { useAuth } from "@composables/useAuth.js";
 import { useChatSessionsPanel } from "@composables/useChatSessionsPanel";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 
 const { isOpen, togglePanel } = useChatSessionsPanel();
 const { toggle: toggleMobileSidebar } = useMobileSidebar();
+
+const router = useRouter();
+const { signOut, isAuthenticated } = useAuth();
+
+const handleLogout = async () => {
+    await signOut();
+    if (!isAuthenticated.value) {
+        router.push({ name: "login" });
+    }
+};
 </script>
 
 <template>
@@ -79,7 +91,12 @@ const { toggle: toggleMobileSidebar } = useMobileSidebar();
             </InputGroup>
 
             <!-- Profile Section -->
-            <UserProfile name="Frederico" plan="Plano X" initial="F" />
+            <UserProfile
+                name="Frederico"
+                plan="Plano X"
+                initial="F"
+                @logout="handleLogout"
+            />
         </div>
     </header>
 </template>

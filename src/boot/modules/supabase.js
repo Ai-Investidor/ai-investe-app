@@ -11,7 +11,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 /** Cliente Supabase singleton — importar via `@boot/modules/supabase.js`. */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { flowType: "pkce" },
+});
 
 /**
  * @param {import('vue').App} app

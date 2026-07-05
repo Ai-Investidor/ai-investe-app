@@ -9,6 +9,7 @@ const service = authService();
 const { error, runAction, clearError } = useAsyncAction({ logLabel: "useAuth" });
 
 const isSigningIn = ref(false);
+const isSigningUp = ref(false);
 const isSigningOut = ref(false);
 const isLoadingSession = ref(false);
 
@@ -16,7 +17,11 @@ let initialized = false;
 let readyPromise = null;
 
 const isLoading = computed(
-  () => isSigningIn.value || isSigningOut.value || isLoadingSession.value,
+  () =>
+    isSigningIn.value ||
+    isSigningUp.value ||
+    isSigningOut.value ||
+    isLoadingSession.value,
 );
 
 // `useAuthStore()` só pode ser chamado depois que o boot do Pinia rodar,
@@ -53,6 +58,20 @@ async function signIn({ email, password }) {
   return data;
 }
 
+async function signUp({ email, password, fullName, phone }) {
+  const authStore = useAuthStore();
+
+  const data = await runAction(
+    () => service.signUp({ email, password, fullName, phone }),
+    { loading: isSigningUp },
+  );
+
+  if (!data) return null;
+
+  authStore.setSession(data.session);
+  return data;
+}
+
 async function signInWithGoogle() {
   await runAction(() => service.signInWithGoogle(), { loading: isSigningIn });
 }
@@ -79,11 +98,13 @@ export function useAuth() {
     error,
     isLoading,
     isSigningIn,
+    isSigningUp,
     isSigningOut,
     isLoadingSession,
     ready,
     clearError,
     signIn,
+    signUp,
     signInWithGoogle,
     signOut,
   };
