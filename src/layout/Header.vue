@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Home from "@/components/icons/Home.vue";
 import MenuFold from "@/components/icons/MenuFold.vue";
@@ -10,14 +11,23 @@ import {
 } from "@components/input-group";
 import UserProfile from "@/components/UserProfile/UserProfile.vue";
 import { useAuth } from "@composables/useAuth.js";
+import { useChat } from "@composables/useChat";
 import { useChatSessionsPanel } from "@composables/useChatSessionsPanel";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 
 const { isOpen, togglePanel } = useChatSessionsPanel();
 const { toggle: toggleMobileSidebar } = useMobileSidebar();
+const { searchSessions, isSearching } = useChat();
 
 const router = useRouter();
 const { signOut, isAuthenticated } = useAuth();
+
+const searchQuery = ref("");
+
+async function handleSearch() {
+    if (!isOpen.value) togglePanel();
+    await searchSessions(searchQuery.value);
+}
 
 const handleLogout = async () => {
     await signOut();
@@ -75,15 +85,20 @@ const handleLogout = async () => {
                 class="max-md:hidden w-[386px] max-lg:w-full max-lg:max-w-xs bg-app-bg border-input-border"
             >
                 <InputGroupInput
+                    v-model="searchQuery"
                     type="search"
                     placeholder="Pesquisar histórico"
                     class="text-paragraph-3 placeholder:text-muted-foreground"
+                    :disabled="isSearching"
+                    @keydown.enter="handleSearch"
                 />
                 <InputGroupAddon align="inline-end">
                     <InputGroupButton
                         type="button"
                         size="sm"
                         class="bg-btn-light text-black text-paragraph-4 hover:bg-opacity-90 rounded-lg"
+                        :disabled="isSearching"
+                        @click="handleSearch"
                     >
                         Buscar
                     </InputGroupButton>

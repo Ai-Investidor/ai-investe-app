@@ -42,10 +42,13 @@ export function chatService() {
 		return { sessions: data ?? [], total: count ?? 0 };
 	}
 
-	async function searchSessions(params) {
+	async function searchSessions({ query, limit = 50 } = {}) {
 		const { data, error } = await supabase.rpc(
 			URLS.RPC_SEARCH_CHAT_SESSIONS,
-			params,
+			{
+				p_term: query,
+				p_limit: limit,
+			},
 		);
 
 		if (error) throw error;
