@@ -42,20 +42,35 @@ const chatColumnClass =
 const attachedFilesSwiper = ref(null);
 
 function refreshAttachedFilesSwiper() {
+	if (attachedFiles.value.length === 0) return;
+
 	const swiper = attachedFilesSwiper.value;
-	if (!swiper) return;
+	if (!swiper || swiper.destroyed) return;
 
 	requestAnimationFrame(() => {
-		swiper.update();
-		swiper.updateSize();
-		swiper.updateSlides();
-		swiper.updateProgress();
+		const instance = attachedFilesSwiper.value;
+		if (
+			!instance ||
+			instance.destroyed ||
+			attachedFiles.value.length === 0
+		) {
+			return;
+		}
+
+		instance.update();
+		instance.updateSize();
+		instance.updateSlides();
+		instance.updateProgress();
 	});
 }
 
 function onAttachedFilesSwiper(swiper) {
 	attachedFilesSwiper.value = swiper;
 	nextTick(refreshAttachedFilesSwiper);
+}
+
+function onAttachedFilesSwiperDestroy() {
+	attachedFilesSwiper.value = null;
 }
 
 const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
@@ -178,7 +193,12 @@ watch(
 
 watch(
 	attachedFiles,
-	() => {
+	(files) => {
+		if (!files.length) {
+			attachedFilesSwiper.value = null;
+			return;
+		}
+
 		nextTick(refreshAttachedFilesSwiper);
 	},
 	{ deep: true },
@@ -374,6 +394,7 @@ watch(
                 no-swiping-selector="button"
                 class="w-full max-w-full overflow-hidden"
                 @swiper="onAttachedFilesSwiper"
+                @destroy="onAttachedFilesSwiperDestroy"
             >
                 <SwiperSlide
                     v-for="(file, index) in attachedFiles"
