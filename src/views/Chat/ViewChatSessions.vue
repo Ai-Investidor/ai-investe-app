@@ -1,4 +1,13 @@
 <script setup>
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@components/alert-dialog";
 import { Button } from "@components/button";
 import {
     DropdownMenu,
@@ -15,6 +24,7 @@ import { useMobileChatSessions } from "@composables/useMobileChatSessions";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 import { prefersReducedMotion } from "@lib/gsap";
 import { cn } from "@lib/utils";
+import { ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
@@ -40,12 +50,39 @@ const {
     loadMoreSessions,
     hasMoreSessions,
     isLoadingMoreSessions,
+    isDeletingSession,
 } = useChat();
 
 const { isOpen } = useChatSessionsPanel();
 
 const { isOpen: isMobileOpen, close: closeMobile } = useMobileChatSessions();
 const { open: openMobileSidebar } = useMobileSidebar();
+
+const sessionToDelete = ref(null);
+const isDeleteDialogOpen = ref(false);
+
+function requestDeleteSession(session) {
+    sessionToDelete.value = session;
+    isDeleteDialogOpen.value = true;
+}
+
+function handleDeleteDialogOpenChange(open) {
+    if (!open && !isDeletingSession.value) {
+        cancelDeleteSession();
+    }
+}
+
+function cancelDeleteSession() {
+    sessionToDelete.value = null;
+    isDeleteDialogOpen.value = false;
+}
+
+async function confirmDeleteSession() {
+    if (!sessionToDelete.value || isDeletingSession.value) return;
+
+    const deleted = await deleteSession(sessionToDelete.value.id);
+    if (deleted) cancelDeleteSession();
+}
 
 function handleLoadMore() {
     if (isLoadingMoreSessions.value || !hasMoreSessions.value) return;
@@ -174,7 +211,7 @@ function backToSidebar() {
                             <DropdownMenuItem
                                 variant="destructive"
                                 class="hover:cursor-pointer"
-                                @click="deleteSession(session.id)"
+                                @click="requestDeleteSession(session)"
                             >
                                 Deletar
                             </DropdownMenuItem>
@@ -310,7 +347,7 @@ function backToSidebar() {
                                 <DropdownMenuItem
                                     variant="destructive"
                                     class="hover:cursor-pointer"
-                                    @click="deleteSession(session.id)"
+                                    @click="requestDeleteSession(session)"
                                 >
                                     Deletar
                                 </DropdownMenuItem>
@@ -341,4 +378,36 @@ function backToSidebar() {
             </ScrollArea>
         </SheetContent>
     </Sheet>
+
+    <AlertDialog
+        :open="isDeleteDialogOpen"
+        @update:open="handleDeleteDialogOpenChange"
+    >
+        <AlertDialogContent class="bg-surface border-white/10">
+            <AlertDialogHeader>
+                <AlertDialogTitle class="text-white">
+                    Excluir sessão?
+                </AlertDialogTitle>
+                <AlertDialogDescription class="text-white/70">
+                    Tem certeza que deseja excluir
+                    <span class="font-medium text-white">
+                        "{{ sessionToDelete?.title }}"
+                    </span>
+                    ? Esta ação não pode ser desfeita.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel :disabled="isDeletingSession">
+                    Cancelar
+                </AlertDialogCancel>
+                <Button
+                    variant="destructive"
+                    :disabled="isDeletingSession"
+                    @click="confirmDeleteSession"
+                >
+                    {{ isDeletingSession ? "Excluindo..." : "Excluir" }}
+                </Button>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 </template>

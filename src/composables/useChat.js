@@ -22,6 +22,7 @@ const sessionsOffset = ref(0);
 const isLoadingMessages = ref(false);
 const isSending = ref(false);
 const isSearching = ref(false);
+const isDeletingSession = ref(false);
 const remainingCredits = ref(null);
 
 let initialized = false;
@@ -239,15 +240,38 @@ function togglePinSession(id) {
   pinnedSessionIds.value = next;
 }
 
-function deleteSession(id) {
+function removeSessionLocally(id) {
   sessions.value = sessions.value.filter((session) => session.id !== id);
 
   const { [id]: _, ...rest } = messagesBySessionId.value;
   messagesBySessionId.value = rest;
 
+  if (pinnedSessionIds.value.has(id)) {
+    const next = new Set(pinnedSessionIds.value);
+    next.delete(id);
+    pinnedSessionIds.value = next;
+  }
+
   if (activeSessionId.value === id) {
     activeSessionId.value = null;
   }
+}
+
+async function deleteSession(id) {
+  const session = sessions.value.find((item) => item.id === id);
+  if (!session) return false;
+
+  if (session.confirmed) {
+    const deleted = await runAction(
+      () => service.deleteSession({ session_id: id }),
+      { loading: isDeletingSession },
+    );
+
+    if (!deleted) return false;
+  }
+
+  removeSessionLocally(id);
+  return true;
 }
 
 async function searchSessions(query) {
@@ -312,7 +336,7 @@ async function sendMessage(text, files = []) {
 
   if (response.session_id && response.session_id !== session.id) {
     const messages = messagesBySessionId.value[session.id] ?? [];
-    deleteSession(session.id);
+    removeSessionLocally(session.id);
     upsertSession({
       id: response.session_id,
       title: session.title,
@@ -360,6 +384,7 @@ export function useChat() {
     isLoadingMessages,
     isSending,
     isSearching,
+    isDeletingSession,
     remainingCredits,
     clearError,
     fetchSessions,
