@@ -59,7 +59,9 @@ const {
     updateSessionTitle,
     loadMoreSessions,
     hasMoreSessions,
+    isLoadingSessions,
     isLoadingMoreSessions,
+    isSearching,
     isDeletingSession,
     isUpdatingSessionTitle,
 } = useChat();
@@ -77,6 +79,20 @@ const editTitle = ref("");
 const isEditDialogOpen = ref(false);
 
 const canSaveEditTitle = computed(() => editTitle.value.trim().length > 0);
+
+const isSessionsListLoading = computed(
+    () =>
+        isLoadingSessions.value ||
+        isSearching.value ||
+        isDeletingSession.value ||
+        isUpdatingSessionTitle.value,
+);
+
+const sessionsLoadingLabel = computed(() => {
+    if (isDeletingSession.value) return "Excluindo sessão";
+    if (isUpdatingSessionTitle.value) return "Salvando título";
+    return "Carregando sessões";
+});
 
 function requestEditSession(session) {
     sessionToEdit.value = session;
@@ -180,8 +196,34 @@ function backToSidebar() {
         </Button>
 
         <!-- Lista de sessões -->
-        <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
-            <ul class="relative flex flex-col pt-2">
+        <ScrollArea class="relative flex-1 min-h-0" data-lenis-prevent>
+            <div
+                v-if="isSessionsListLoading"
+                class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-surface/80"
+                role="status"
+                aria-live="polite"
+                :aria-label="sessionsLoadingLabel"
+            >
+                <div class="flex items-center gap-1.5" aria-hidden="true">
+                    <span
+                        class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                    />
+                    <span
+                        class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                    />
+                    <span class="size-2 rounded-full bg-white/55 animate-bounce" />
+                </div>
+                <p class="text-paragraph-9 text-white/55">
+                    {{ sessionsLoadingLabel }}...
+                </p>
+            </div>
+
+            <ul
+                class="relative flex flex-col pt-2"
+                :class="
+                    isSessionsListLoading && 'pointer-events-none opacity-50'
+                "
+            >
                 <div
                     aria-hidden="true"
                     class="absolute left-[7px] top-2 bottom-2 border-l border-dashed border-white/15"
@@ -281,8 +323,22 @@ function backToSidebar() {
                     </Button>
                     <span
                         v-else-if="isLoadingMoreSessions"
-                        class="text-paragraph-9 text-white/50"
+                        class="flex items-center gap-2 text-paragraph-9 text-white/50"
+                        role="status"
+                        aria-live="polite"
+                        aria-label="Carregando mais sessões"
                     >
+                        <span class="flex items-center gap-1" aria-hidden="true">
+                            <span
+                                class="size-1.5 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                            />
+                            <span
+                                class="size-1.5 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                            />
+                            <span
+                                class="size-1.5 rounded-full bg-white/55 animate-bounce"
+                            />
+                        </span>
                         Carregando...
                     </span>
                 </li>
@@ -320,8 +376,36 @@ function backToSidebar() {
             </Button>
 
             <!-- Lista de sessões -->
-            <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
-                <ul class="relative flex flex-col pt-2">
+            <ScrollArea class="relative flex-1 min-h-0" data-lenis-prevent>
+                <div
+                    v-if="isSessionsListLoading"
+                    class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-surface/80"
+                    role="status"
+                    aria-live="polite"
+                    :aria-label="sessionsLoadingLabel"
+                >
+                    <div class="flex items-center gap-1.5" aria-hidden="true">
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                        />
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                        />
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce"
+                        />
+                    </div>
+                    <p class="text-paragraph-9 text-white/55">
+                        {{ sessionsLoadingLabel }}...
+                    </p>
+                </div>
+
+                <ul
+                    class="relative flex flex-col pt-2"
+                    :class="
+                        isSessionsListLoading && 'pointer-events-none opacity-50'
+                    "
+                >
                     <div
                         aria-hidden="true"
                         class="absolute left-[7px] top-2 bottom-2 border-l border-dashed border-white/15"
@@ -417,8 +501,22 @@ function backToSidebar() {
                         </Button>
                         <span
                             v-else-if="isLoadingMoreSessions"
-                            class="text-paragraph-9 text-white/50"
+                            class="flex items-center gap-2 text-paragraph-9 text-white/50"
+                            role="status"
+                            aria-live="polite"
+                            aria-label="Carregando mais sessões"
                         >
+                            <span class="flex items-center gap-1" aria-hidden="true">
+                                <span
+                                    class="size-1.5 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                                />
+                                <span
+                                    class="size-1.5 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                                />
+                                <span
+                                    class="size-1.5 rounded-full bg-white/55 animate-bounce"
+                                />
+                            </span>
                             Carregando...
                         </span>
                     </li>
