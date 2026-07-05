@@ -108,9 +108,18 @@ const activeSession = computed(() => {
   return session ? withMessages(session) : null;
 });
 
-const hasActiveConversation = computed(
-  () => (activeSession.value?.messages?.length ?? 0) > 0,
-);
+const hasActiveConversation = computed(() => {
+  if (!activeSessionId.value) return false;
+
+  const session = activeSession.value;
+  if (!session) return false;
+
+  return (
+    session.confirmed ||
+    (session.messages?.length ?? 0) > 0 ||
+    isLoadingMessages.value
+  );
+});
 
 const isLoading = computed(
   () =>
@@ -200,6 +209,7 @@ function selectSession(id) {
   activeSessionId.value = id;
 
   if (!messagesBySessionId.value[id]?.length) {
+    isLoadingMessages.value = true;
     loadSessionMessages(id);
   }
 }

@@ -13,7 +13,7 @@ import { ref } from "vue";
 import Clock from "@/components/icons/Clock.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 
-const { activeSession, sendMessage, isSending } = useChat();
+const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
 
 const inputText = ref("");
 
@@ -30,7 +30,31 @@ function handleSubmit() {
         <h1 class="sr-only">Conversa com a IA</h1>
 
         <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
+            <div
+                v-if="isLoadingMessages"
+                class="flex flex-1 flex-col items-center justify-center gap-3 min-h-[200px] py-12"
+                role="status"
+                aria-live="polite"
+                aria-label="Carregando mensagens"
+            >
+                <div class="flex items-center gap-1.5" aria-hidden="true">
+                    <span
+                        class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                    />
+                    <span
+                        class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                    />
+                    <span
+                        class="size-2 rounded-full bg-white/55 animate-bounce"
+                    />
+                </div>
+                <p class="text-paragraph-3 text-white/55">
+                    Carregando mensagens...
+                </p>
+            </div>
+
             <ul
+                v-else
                 class="flex flex-col gap-5 w-[clamp(541px,65%,720px)] max-md:w-full mx-auto py-4"
             >
                 <li
@@ -142,14 +166,14 @@ function handleSubmit() {
                 type="text"
                 placeholder="Fale com nossa IA..."
                 class="text-paragraph-3 text-white/55 placeholder:text-white/55"
-                :disabled="isSending"
+                :disabled="isSending || isLoadingMessages"
                 @keydown.enter="handleSubmit"
             />
             <InputGroupAddon align="inline-end" class="pr-0">
                 <InputGroupButton
                     size="sm"
                     class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
-                    :disabled="isSending"
+                    :disabled="isSending || isLoadingMessages"
                     @click="handleSubmit"
                 >
                     ?
