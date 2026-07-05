@@ -1,11 +1,11 @@
 <script setup>
 import chatBg from "@assets/images/chat/chat-bg.webp";
-import { useChatSessions } from "@composables/useChatSessions";
+import { useChat } from "@composables/useChat";
 import ViewChat from "@views/Chat/ViewChat.vue";
 import ViewChatConversation from "@views/Chat/ViewChatConversation.vue";
 import ViewChatSessions from "@views/Chat/ViewChatSessions.vue";
 
-const { hasActiveConversation } = useChatSessions();
+const { hasActiveConversation } = useChat();
 </script>
 
 <template>

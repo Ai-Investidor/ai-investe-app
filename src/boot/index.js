@@ -1,6 +1,4 @@
 // src/boot/index.js
-export { api } from "./modules/axios.js";
-export { supabase } from "./modules/supabase.js";
 
 /**
  * Cada módulo em ./modules exporta como default uma função:

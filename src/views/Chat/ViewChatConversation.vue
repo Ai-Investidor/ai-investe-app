@@ -8,11 +8,11 @@ import {
     InputGroupInput,
 } from "@components/input-group";
 import { ScrollArea } from "@components/scroll-area";
-import { useChatSessions } from "@composables/useChatSessions";
+import { useChat } from "@composables/useChat";
 import Clock from "@/components/icons/Clock.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 
-const { activeSession, sendMessage } = useChatSessions();
+const { activeSession, sendMessage } = useChat();
 
 const inputText = ref("");
 

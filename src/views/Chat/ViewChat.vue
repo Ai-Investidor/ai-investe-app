@@ -6,14 +6,14 @@ import {
 	InputGroupButton,
 	InputGroupInput,
 } from "@components/input-group";
-import { useChatSessions } from "@composables/useChatSessions";
+import { useChat } from "@composables/useChat";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
 import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
 
-const { sendMessage } = useChatSessions();
+const { sendMessage } = useChat();
 
 const inputText = ref("");
 

@@ -9,7 +9,7 @@ import {
 } from "@components/dropdown-menu";
 import { ScrollArea } from "@components/scroll-area";
 import { Sheet, SheetContent } from "@components/sheet";
-import { useChatSessions } from "@composables/useChatSessions";
+import { useChat } from "@composables/useChat";
 import { useChatSessionsPanel } from "@composables/useChatSessionsPanel";
 import { useMobileChatSessions } from "@composables/useMobileChatSessions";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
@@ -37,7 +37,7 @@ const {
     createSession,
     togglePinSession,
     deleteSession,
-} = useChatSessions();
+} = useChat();
 
 const { isOpen } = useChatSessionsPanel();
 

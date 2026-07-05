@@ -10,7 +10,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-/** Cliente Supabase singleton — importar via `@boot` ou `@boot/modules/supabase`. */
+/** Cliente Supabase singleton — importar via `@boot/modules/supabase.js`. */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**

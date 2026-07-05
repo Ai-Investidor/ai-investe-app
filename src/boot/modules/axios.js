@@ -7,7 +7,7 @@ if (!baseURL) {
   throw new Error("[axios] VITE_BASE_URL_API é obrigatório no .env");
 }
 
-/** Cliente HTTP singleton — importar via `@boot` ou `@boot/modules/axios`. */
+/** Cliente HTTP singleton — importar via `@boot/modules/axios.js`. */
 export const api = axios.create({
   baseURL,
   headers: {
