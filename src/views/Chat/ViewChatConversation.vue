@@ -9,18 +9,97 @@ import {
 import { ScrollArea } from "@components/scroll-area";
 import { useChat } from "@composables/useChat";
 import { renderMarkdown } from "@utils/renderMarkdown.js";
-import { ref } from "vue";
+import { useDebounceFn } from "@vueuse/core";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import ArrowDown from "@/components/icons/ArrowDown.vue";
 import Clock from "@/components/icons/Clock.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 
 const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
 
 const inputText = ref("");
+const scrollAreaRef = ref(null);
+const viewportEl = ref(null);
+const isAtBottom = ref(true);
+const isScrolling = ref(false);
+
+const SCROLL_THRESHOLD = 48;
+
+const showScrollToBottom = computed(
+	() => !isAtBottom.value && !isScrolling.value,
+);
+
+function getViewport() {
+	return (
+		scrollAreaRef.value?.$el?.querySelector(
+			"[data-slot=scroll-area-viewport]",
+		) ?? null
+	);
+}
+
+function checkIsAtBottom(el) {
+	return el.scrollHeight - el.scrollTop - el.clientHeight <= SCROLL_THRESHOLD;
+}
+
+function updateScrollState() {
+	const el = viewportEl.value;
+	if (!el) return;
+
+	isAtBottom.value = checkIsAtBottom(el);
+}
+
+const onScrollEnd = useDebounceFn(() => {
+	isScrolling.value = false;
+	updateScrollState();
+}, 150);
+
+function onScroll() {
+	isScrolling.value = true;
+	updateScrollState();
+	onScrollEnd();
+}
+
+function bindViewport() {
+	viewportEl.value?.removeEventListener("scroll", onScroll);
+	viewportEl.value = getViewport();
+
+	if (!viewportEl.value) return;
+
+	viewportEl.value.addEventListener("scroll", onScroll, { passive: true });
+	updateScrollState();
+}
+
+function scrollToBottom() {
+	const el = viewportEl.value;
+	if (!el) return;
+
+	el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+}
 
 function handleSubmit() {
 	sendMessage(inputText.value);
 	inputText.value = "";
 }
+
+onMounted(() => {
+	nextTick(bindViewport);
+});
+
+onUnmounted(() => {
+	viewportEl.value?.removeEventListener("scroll", onScroll);
+});
+
+watch(
+	() => [
+		activeSession.value?.id,
+		activeSession.value?.messages?.length,
+		isSending.value,
+		isLoadingMessages.value,
+	],
+	() => {
+		nextTick(updateScrollState);
+	},
+);
 </script>
 
 <template>
@@ -29,7 +108,12 @@ function handleSubmit() {
     >
         <h1 class="sr-only">Conversa com a IA</h1>
 
-        <ScrollArea class="flex-1 min-h-0" data-lenis-prevent>
+        <div class="relative flex-1 min-h-0">
+            <ScrollArea
+                ref="scrollAreaRef"
+                class="h-full"
+                data-lenis-prevent
+            >
             <div
                 v-if="isLoadingMessages"
                 class="flex flex-1 flex-col items-center justify-center gap-3 min-h-[200px] py-12"
@@ -152,7 +236,25 @@ function handleSubmit() {
                     </div>
                 </li>
             </ul>
-        </ScrollArea>
+            </ScrollArea>
+
+            <Transition
+                enter-active-class="transition-opacity duration-200"
+                leave-active-class="transition-opacity duration-200"
+                enter-from-class="opacity-0"
+                leave-to-class="opacity-0"
+            >
+                <button
+                    v-if="showScrollToBottom"
+                    type="button"
+                    class="absolute bottom-4 left-1/2 z-20 flex size-10 -translate-x-1/2 items-center justify-center rounded-full border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] text-white/55 hover:text-white"
+                    aria-label="Ir para o final da conversa"
+                    @click="scrollToBottom"
+                >
+                    <ArrowDown class="size-4" aria-hidden="true" />
+                </button>
+            </Transition>
+        </div>
 
         <!-- Input with button -->
         <InputGroup
