@@ -13,7 +13,7 @@ import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
 import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
 
-const { sendMessage } = useChat();
+const { sendMessage, isSending } = useChat();
 
 const inputText = ref("");
 
@@ -87,12 +87,14 @@ const suggestions = [
         type="text"
         placeholder="Fale com nossa IA..."
         class="text-paragraph-3 text-white/55 placeholder:text-white/55"
+        :disabled="isSending"
         @keydown.enter="handleSubmit"
       />
       <InputGroupAddon align="inline-end" class="pr-0">
         <InputGroupButton
           size="sm"
           class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
+          :disabled="isSending"
           @click="handleSubmit"
         >
           ?

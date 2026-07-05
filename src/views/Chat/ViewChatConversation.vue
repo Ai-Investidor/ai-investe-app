@@ -1,24 +1,25 @@
 <script setup>
-import { ref } from "vue";
 import { Avatar, AvatarFallback } from "@components/avatar";
 import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
 } from "@components/input-group";
 import { ScrollArea } from "@components/scroll-area";
 import { useChat } from "@composables/useChat";
+import { renderMarkdown } from "@utils/renderMarkdown.js";
+import { ref } from "vue";
 import Clock from "@/components/icons/Clock.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 
-const { activeSession, sendMessage } = useChat();
+const { activeSession, sendMessage, isSending } = useChat();
 
 const inputText = ref("");
 
 function handleSubmit() {
-    sendMessage(inputText.value);
-    inputText.value = "";
+	sendMessage(inputText.value);
+	inputText.value = "";
 }
 </script>
 
@@ -66,14 +67,21 @@ function handleSubmit() {
                         ]"
                     >
                         <p
-                            :class="[
-                                'text-paragraph-10 text-white whitespace-pre-wrap',
-                                message.role === 'user'
-                                    ? 'text-right'
-                                    : 'text-left',
-                            ]"
+                            v-if="message.role === 'user'"
+                            class="text-paragraph-10 text-white whitespace-pre-wrap text-right"
                         >
                             {{ message.content }}
+                        </p>
+                        <div
+                            v-else
+                            class="text-paragraph-10 text-white text-left [&_p]:whitespace-pre-wrap"
+                            v-html="renderMarkdown(message.content)"
+                        />
+                        <p
+                            v-if="message.news"
+                            class="text-paragraph-3 text-white/55 text-left border-t border-card-border pt-3 w-full"
+                        >
+                            Notícias relacionadas: {{ message.news }}
                         </p>
                         <div class="flex items-center gap-3">
                             <Clock
@@ -87,6 +95,36 @@ function handleSubmit() {
                                 {{ message.time }}
                             </time>
                         </div>
+                    </div>
+                </li>
+
+                <li
+                    v-if="isSending"
+                    class="flex gap-3 items-start self-start"
+                    role="status"
+                    aria-label="A IA está digitando"
+                >
+                    <Avatar class="size-8 shrink-0">
+                        <AvatarFallback
+                            class="bg-primary text-black text-sm font-medium"
+                        >
+                            AI
+                        </AvatarFallback>
+                    </Avatar>
+
+                    <div
+                        class="flex items-center gap-1.5 border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] rounded-md px-[15px] py-[18px]"
+                        aria-hidden="true"
+                    >
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.3s]"
+                        />
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce [animation-delay:-0.15s]"
+                        />
+                        <span
+                            class="size-2 rounded-full bg-white/55 animate-bounce"
+                        />
                     </div>
                 </li>
             </ul>
@@ -104,12 +142,14 @@ function handleSubmit() {
                 type="text"
                 placeholder="Fale com nossa IA..."
                 class="text-paragraph-3 text-white/55 placeholder:text-white/55"
+                :disabled="isSending"
                 @keydown.enter="handleSubmit"
             />
             <InputGroupAddon align="inline-end" class="pr-0">
                 <InputGroupButton
                     size="sm"
                     class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
+                    :disabled="isSending"
                     @click="handleSubmit"
                 >
                     ?
