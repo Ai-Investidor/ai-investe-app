@@ -27,6 +27,21 @@ export function chatService() {
 		return data;
 	}
 
+	async function getSessionsPaginated({ limit, offset }) {
+		const from = offset;
+		const to = offset + limit - 1;
+
+		const { data, error, count } = await supabase
+			.from(URLS.TABLE_CHAT_SESSIONS)
+			.select("*", { count: "exact" })
+			.order("updated_at", { ascending: false })
+			.order("session_id", { ascending: false })
+			.range(from, to);
+
+		if (error) throw error;
+		return { sessions: data ?? [], total: count ?? 0 };
+	}
+
 	async function searchSessions(params) {
 		const { data, error } = await supabase.rpc(
 			URLS.RPC_SEARCH_CHAT_SESSIONS,
@@ -47,10 +62,20 @@ export function chatService() {
 		return data;
 	}
 
-	async function getMessagesPaginated(params) {
+	async function getMessagesPaginated({
+		session_id,
+		page = 1,
+		page_size = 50,
+		order = "ASC",
+	} = {}) {
 		const { data, error } = await supabase.rpc(
 			URLS.RPC_GET_SESSION_MESSAGES_PAGINATED,
-			params,
+			{
+				p_session_id: session_id,
+				p_page: page,
+				p_page_size: page_size,
+				p_order: order,
+			},
 		);
 
 		if (error) throw error;
@@ -60,6 +85,7 @@ export function chatService() {
 	return {
 		sendMessage,
 		getSessions,
+		getSessionsPaginated,
 		searchSessions,
 		updateTitle,
 		getMessagesPaginated,

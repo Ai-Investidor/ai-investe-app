@@ -37,12 +37,20 @@ const {
     createSession,
     togglePinSession,
     deleteSession,
+    loadMoreSessions,
+    hasMoreSessions,
+    isLoadingMoreSessions,
 } = useChat();
 
 const { isOpen } = useChatSessionsPanel();
 
 const { isOpen: isMobileOpen, close: closeMobile } = useMobileChatSessions();
 const { open: openMobileSidebar } = useMobileSidebar();
+
+function handleLoadMore() {
+    if (isLoadingMoreSessions.value || !hasMoreSessions.value) return;
+    loadMoreSessions();
+}
 
 function selectSessionMobile(id) {
     selectSession(id);
@@ -173,6 +181,26 @@ function backToSidebar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </li>
+                <li
+                    v-if="hasMoreSessions || isLoadingMoreSessions"
+                    class="relative z-10 flex justify-center py-2"
+                >
+                    <Button
+                        v-if="hasMoreSessions && !isLoadingMoreSessions"
+                        variant="ghost"
+                        size="sm"
+                        class="h-7 text-paragraph-9 text-white/70 hover:text-white"
+                        @click="handleLoadMore"
+                    >
+                        Ver mais
+                    </Button>
+                    <span
+                        v-else-if="isLoadingMoreSessions"
+                        class="text-paragraph-9 text-white/50"
+                    >
+                        Carregando...
+                    </span>
+                </li>
             </ul>
         </ScrollArea>
     </nav>
@@ -288,6 +316,26 @@ function backToSidebar() {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                    </li>
+                    <li
+                        v-if="hasMoreSessions || isLoadingMoreSessions"
+                        class="relative z-10 flex justify-center py-2"
+                    >
+                        <Button
+                            v-if="hasMoreSessions && !isLoadingMoreSessions"
+                            variant="ghost"
+                            size="sm"
+                            class="h-7 text-paragraph-9 text-white/70 hover:text-white"
+                            @click="handleLoadMore"
+                        >
+                            Ver mais
+                        </Button>
+                        <span
+                            v-else-if="isLoadingMoreSessions"
+                            class="text-paragraph-9 text-white/50"
+                        >
+                            Carregando...
+                        </span>
                     </li>
                 </ul>
             </ScrollArea>
