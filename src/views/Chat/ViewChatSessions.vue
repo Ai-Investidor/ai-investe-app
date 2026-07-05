@@ -231,52 +231,55 @@ function backToSidebar() {
                 <li
                     v-for="session in sortedSessions"
                     :key="session.id"
-                    class="group/row relative z-10 flex items-center gap-1"
+                    class="relative z-10"
                 >
-                    <button
-                        type="button"
-                        :aria-current="
-                            session.id === activeSessionId ? 'true' : undefined
-                        "
-                        :class="
-                            cn(
-                                'group flex flex-1 min-w-0 items-center gap-2 h-9 text-left hover:cursor-pointer',
-                            )
-                        "
-                        @click="selectSession(session.id)"
-                    >
-                        <DrawingPin
+                    <div class="group flex items-center gap-1">
+                        <button
+                            type="button"
+                            :aria-current="
+                                session.id === activeSessionId
+                                    ? 'true'
+                                    : undefined
+                            "
                             :class="
                                 cn(
-                                    'size-4 shrink-0 transition-colors duration-200',
-                                    session.id === activeSessionId
-                                        ? 'text-primary'
-                                        : 'text-white/40 group-hover:text-white/70',
+                                    'group/item flex flex-1 min-w-0 items-center gap-2 h-9 text-left hover:cursor-pointer',
                                 )
                             "
-                            aria-hidden="true"
-                        />
-                        <span
-                            :class="
-                                cn(
-                                    'text-paragraph-5 truncate transition-colors duration-200',
-                                    session.id === activeSessionId
-                                        ? 'text-white'
-                                        : 'text-white/70 group-hover:text-white',
-                                )
-                            "
+                            @click="selectSession(session.id)"
                         >
-                            {{ session.title }}
-                        </span>
-                    </button>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger as-child>
-                            <button
-                                type="button"
-                                aria-label="Mais opções"
-                                class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
+                            <DrawingPin
+                                :class="
+                                    cn(
+                                        'size-4 shrink-0 transition-colors duration-200',
+                                        session.id === activeSessionId
+                                            ? 'text-primary'
+                                            : 'text-white/40 group-hover/item:text-white/70',
+                                    )
+                                "
+                                aria-hidden="true"
+                            />
+                            <span
+                                :class="
+                                    cn(
+                                        'text-paragraph-5 truncate transition-colors duration-200',
+                                        session.id === activeSessionId
+                                            ? 'text-white'
+                                            : 'text-white/70 group-hover/item:text-white',
+                                    )
+                                "
                             >
+                                {{ session.title }}
+                            </span>
+                        </button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <button
+                                    type="button"
+                                    aria-label="Mais opções"
+                                    class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto focus-visible:opacity-100 focus-visible:pointer-events-auto data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
+                                >
                                 <MoreVertical
                                     class="size-4"
                                     aria-hidden="true"
@@ -306,7 +309,8 @@ function backToSidebar() {
                                 Deletar
                             </DropdownMenuItem>
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                        </DropdownMenu>
+                    </div>
                 </li>
                 <li
                     v-if="hasMoreSessions || isLoadingMoreSessions"
