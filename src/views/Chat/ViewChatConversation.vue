@@ -1,6 +1,12 @@
 <script setup>
 import { Avatar, AvatarFallback } from "@components/avatar";
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@components/dropdown-menu";
+import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
@@ -10,14 +16,53 @@ import { ScrollArea } from "@components/scroll-area";
 import { useChat } from "@composables/useChat";
 import { renderMarkdown } from "@utils/renderMarkdown.js";
 import { useDebounceFn } from "@vueuse/core";
+import { A11y, FreeMode } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import ArrowDown from "@/components/icons/ArrowDown.vue";
 import Clock from "@/components/icons/Clock.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
+import "swiper/css";
+
+const attachedFilesSwiperModules = [A11y, FreeMode];
+
+const attachedFilesFreeMode = {
+	enabled: true,
+	momentum: true,
+	momentumRatio: 1.25,
+	momentumVelocityRatio: 1.25,
+	momentumBounce: false,
+	sticky: false,
+	minimumVelocity: 0.02,
+};
+
+const chatColumnClass =
+	"w-full min-w-0 max-w-full mx-auto md:w-[clamp(541px,65%,720px)]";
+
+const attachedFilesSwiper = ref(null);
+
+function refreshAttachedFilesSwiper() {
+	const swiper = attachedFilesSwiper.value;
+	if (!swiper) return;
+
+	requestAnimationFrame(() => {
+		swiper.update();
+		swiper.updateSize();
+		swiper.updateSlides();
+		swiper.updateProgress();
+	});
+}
+
+function onAttachedFilesSwiper(swiper) {
+	attachedFilesSwiper.value = swiper;
+	nextTick(refreshAttachedFilesSwiper);
+}
 
 const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
 
 const inputText = ref("");
+const fileInputRef = ref(null);
+const attachedFiles = ref([]);
 const scrollAreaRef = ref(null);
 const viewportEl = ref(null);
 const isAtBottom = ref(true);
@@ -27,6 +72,13 @@ const SCROLL_THRESHOLD = 48;
 
 const showScrollToBottom = computed(
 	() => !isAtBottom.value && !isScrolling.value,
+);
+
+const canSubmit = computed(
+	() =>
+		(inputText.value.trim().length > 0 || attachedFiles.value.length > 0) &&
+		!isSending.value &&
+		!isLoadingMessages.value,
 );
 
 function getViewport() {
@@ -77,8 +129,31 @@ function scrollToBottom() {
 }
 
 function handleSubmit() {
-	sendMessage(inputText.value);
+	if (!canSubmit.value) return;
+
+	sendMessage(inputText.value, [...attachedFiles.value]);
 	inputText.value = "";
+	attachedFiles.value = [];
+
+	if (fileInputRef.value) {
+		fileInputRef.value.value = "";
+	}
+}
+
+function openFilePicker() {
+	fileInputRef.value?.click();
+}
+
+function handleFileChange(event) {
+	const files = Array.from(event.target.files ?? []);
+	if (!files.length) return;
+
+	attachedFiles.value = [...attachedFiles.value, ...files];
+	event.target.value = "";
+}
+
+function removeAttachedFile(index) {
+	attachedFiles.value = attachedFiles.value.filter((_, i) => i !== index);
 }
 
 onMounted(() => {
@@ -100,18 +175,26 @@ watch(
 		nextTick(updateScrollState);
 	},
 );
+
+watch(
+	attachedFiles,
+	() => {
+		nextTick(refreshAttachedFilesSwiper);
+	},
+	{ deep: true },
+);
 </script>
 
 <template>
     <section
-        class="relative z-10 flex flex-col h-full w-full min-h-0 gap-[25px] px-6 py-6 max-md:px-4 max-md:py-4"
+        class="relative z-10 flex flex-col h-full w-full min-h-0 min-w-0 overflow-x-clip gap-[25px] px-6 py-6 max-md:px-4 max-md:py-4"
     >
         <h1 class="sr-only">Conversa com a IA</h1>
 
-        <div class="relative flex-1 min-h-0">
+        <div class="relative flex-1 min-h-0 min-w-0 overflow-hidden">
             <ScrollArea
                 ref="scrollAreaRef"
-                class="h-full"
+                class="h-full min-w-0"
                 data-lenis-prevent
             >
             <div
@@ -139,13 +222,13 @@ watch(
 
             <ul
                 v-else
-                class="flex flex-col gap-5 w-[clamp(541px,65%,720px)] max-md:w-full mx-auto py-4"
+                :class="['flex flex-col gap-5 py-4', chatColumnClass]"
             >
                 <li
                     v-for="message in activeSession?.messages ?? []"
                     :key="message.id"
                     :class="[
-                        'flex gap-3 items-start',
+                        'flex w-full min-w-0 max-w-full gap-3 items-start',
                         message.role === 'user'
                             ? 'flex-row-reverse self-end'
                             : 'self-start',
@@ -168,7 +251,7 @@ watch(
 
                     <div
                         :class="[
-                            'flex flex-col gap-3 max-w-[70%] max-md:max-w-[85%] border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] rounded-md px-[15px] py-[15px]',
+                            'flex min-w-0 flex-col gap-3 max-w-[85%] md:max-w-[70%] border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] rounded-md px-[15px] py-[15px]',
                             message.role === 'user'
                                 ? 'items-end'
                                 : 'items-start',
@@ -176,13 +259,13 @@ watch(
                     >
                         <p
                             v-if="message.role === 'user'"
-                            class="text-paragraph-10 text-white whitespace-pre-wrap text-right"
+                            class="text-paragraph-10 text-white whitespace-pre-wrap break-words text-right"
                         >
                             {{ message.content }}
                         </p>
                         <div
                             v-else
-                            class="text-paragraph-10 text-white text-left [&_p]:whitespace-pre-wrap"
+                            class="text-paragraph-10 text-white text-left min-w-0 max-w-full break-words [&_p]:whitespace-pre-wrap [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_code]:break-words [&_img]:max-w-full"
                             v-html="renderMarkdown(message.content)"
                         />
                         <p
@@ -257,11 +340,100 @@ watch(
         </div>
 
         <!-- Input with button -->
+        <input
+            id="chat-file-upload"
+            ref="fileInputRef"
+            type="file"
+            multiple
+            class="sr-only"
+            :disabled="isSending || isLoadingMessages"
+            @change="handleFileChange"
+        />
+
+        <div
+            v-if="attachedFiles.length"
+            data-lenis-prevent
+            :class="[
+                'shrink-0 overflow-hidden [contain:inline-size]',
+                chatColumnClass,
+            ]"
+            aria-label="Arquivos anexados"
+        >
+            <Swiper
+                :modules="attachedFilesSwiperModules"
+                slides-per-view="auto"
+                :space-between="8"
+                :free-mode="attachedFilesFreeMode"
+                :watch-overflow="false"
+                :threshold="5"
+                :touch-angle="30"
+                touch-release-on-edges
+                grab-cursor
+                :observer="true"
+                :observe-slide-children="true"
+                no-swiping-selector="button"
+                class="w-full max-w-full overflow-hidden"
+                @swiper="onAttachedFilesSwiper"
+            >
+                <SwiperSlide
+                    v-for="(file, index) in attachedFiles"
+                    :key="`${file.name}-${file.lastModified}-${index}`"
+                    class="!box-border !w-36 max-md:!w-28"
+                >
+                    <div
+                        class="flex w-full min-w-0 items-center gap-2 rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 px-3 py-1.5"
+                    >
+                        <span
+                            class="min-w-0 flex-1 truncate text-paragraph-3 text-white/70"
+                        >
+                            {{ file.name }}
+                        </span>
+                        <button
+                            type="button"
+                            class="text-paragraph-3 text-white/55 hover:text-white shrink-0"
+                            :aria-label="`Remover ${file.name}`"
+                            @click="removeAttachedFile(index)"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </SwiperSlide>
+            </Swiper>
+        </div>
+
         <InputGroup
-            class="gap-2 w-[clamp(541px,65%,720px)] max-md:w-full mx-auto h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 shrink-0 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
+            :class="[
+                'gap-2 h-auto shrink-0 bg-app-bg border-input-border rounded-lg px-6 max-md:px-4 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border',
+                chatColumnClass,
+            ]"
         >
             <InputGroupAddon align="inline-start">
-                <FilePlus class="size-4 text-white/55" aria-hidden="true" />
+                <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                        <button
+                            type="button"
+                            aria-label="Anexar"
+                            class="flex items-center justify-center text-white/55 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+                            :disabled="isSending || isLoadingMessages"
+                        >
+                            <FilePlus class="size-4" aria-hidden="true" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DropdownMenuItem
+                            as-child
+                            :disabled="isSending || isLoadingMessages"
+                        >
+                            <label
+                                for="chat-file-upload"
+                                class="w-full hover:cursor-pointer"
+                                @pointerdown.prevent.stop="openFilePicker"
+                            >
+                                Arquivos
+                            </label>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </InputGroupAddon>
             <InputGroupInput
                 v-model="inputText"
@@ -275,7 +447,7 @@ watch(
                 <InputGroupButton
                     size="sm"
                     class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
-                    :disabled="isSending || isLoadingMessages"
+                    :disabled="!canSubmit"
                     @click="handleSubmit"
                 >
                     ?
@@ -285,7 +457,10 @@ watch(
 
         <!-- Disclaimer -->
         <p
-            class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui shrink-0 mx-auto"
+            :class="[
+                'text-paragraph-1 text-white/25 text-center tracking-ui shrink-0 w-full min-w-0 px-2 max-md:text-wrap',
+                chatColumnClass,
+            ]"
         >
             AI invest é uma IA e pode cometer erros pode cometer erros.
         </p>

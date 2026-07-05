@@ -9,13 +9,15 @@ const { hasActiveConversation } = useChat();
 </script>
 
 <template>
-    <div class="flex-1 page-container">
-        <div class="p-3 size-full flex flex-row items-stretch gap-3">
+    <div class="flex-1 page-container min-w-0">
+        <div
+            class="p-3 max-md:p-2 size-full flex flex-row items-stretch gap-3 min-w-0 overflow-hidden"
+        >
             <ViewChatSessions class="max-lg:hidden" />
 
             <div
                 :class="[
-                    'relative flex-1 flex flex-col gap-[25px] rounded-lg size-full overflow-hidden bg-gradient-to-br from-black to-surface-2',
+                    'relative flex-1 flex flex-col gap-[25px] rounded-lg size-full min-w-0 overflow-hidden bg-gradient-to-br from-black to-surface-2',
                     hasActiveConversation
                         ? 'items-stretch justify-start'
                         : 'items-center justify-center',
@@ -37,7 +39,7 @@ const { hasActiveConversation } = useChat();
 
                 <div
                     :class="[
-                        'relative z-10 flex-1 flex flex-col gap-[25px]',
+                        'relative z-10 flex-1 flex flex-col gap-[25px] min-w-0',
                         hasActiveConversation
                             ? 'items-stretch overflow-hidden'
                             : 'items-center overflow-y-auto',

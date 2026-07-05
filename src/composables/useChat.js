@@ -328,10 +328,13 @@ async function updateSessionTitle(sessionId, title) {
 
 async function sendMessage(text, files = []) {
   const trimmed = text.trim();
-  if (!trimmed || isSending.value) return;
+  if ((!trimmed && files.length === 0) || isSending.value) return;
 
   const session = activeSession.value ?? createSession();
-  appendMessage(session.id, createLocalMessage("user", trimmed));
+  const content =
+    trimmed || files.map((file) => file.name).join(", ");
+
+  appendMessage(session.id, createLocalMessage("user", content));
 
   const response = await runAction(
     () =>
