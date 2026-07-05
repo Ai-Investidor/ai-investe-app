@@ -10,12 +10,21 @@ import {
 } from "@components/alert-dialog";
 import { Button } from "@components/button";
 import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@components/dialog";
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@components/dropdown-menu";
+import { Input } from "@components/input";
+import { Label } from "@components/label";
 import { ScrollArea } from "@components/scroll-area";
 import { Sheet, SheetContent } from "@components/sheet";
 import { useChat } from "@composables/useChat";
@@ -24,7 +33,7 @@ import { useMobileChatSessions } from "@composables/useMobileChatSessions";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 import { prefersReducedMotion } from "@lib/gsap";
 import { cn } from "@lib/utils";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
@@ -47,10 +56,12 @@ const {
     createSession,
     togglePinSession,
     deleteSession,
+    updateSessionTitle,
     loadMoreSessions,
     hasMoreSessions,
     isLoadingMoreSessions,
     isDeletingSession,
+    isUpdatingSessionTitle,
 } = useChat();
 
 const { isOpen } = useChatSessionsPanel();
@@ -60,6 +71,43 @@ const { open: openMobileSidebar } = useMobileSidebar();
 
 const sessionToDelete = ref(null);
 const isDeleteDialogOpen = ref(false);
+
+const sessionToEdit = ref(null);
+const editTitle = ref("");
+const isEditDialogOpen = ref(false);
+
+const canSaveEditTitle = computed(() => editTitle.value.trim().length > 0);
+
+function requestEditSession(session) {
+    sessionToEdit.value = session;
+    editTitle.value = session.title;
+    isEditDialogOpen.value = true;
+}
+
+function handleEditDialogOpenChange(open) {
+    if (!open && !isUpdatingSessionTitle.value) {
+        cancelEditSession();
+    }
+}
+
+function cancelEditSession() {
+    sessionToEdit.value = null;
+    editTitle.value = "";
+    isEditDialogOpen.value = false;
+}
+
+async function confirmEditSession() {
+    if (!sessionToEdit.value || !canSaveEditTitle.value || isUpdatingSessionTitle.value) {
+        return;
+    }
+
+    const updated = await updateSessionTitle(
+        sessionToEdit.value.id,
+        editTitle.value,
+    );
+
+    if (updated) cancelEditSession();
+}
 
 function requestDeleteSession(session) {
     sessionToDelete.value = session;
@@ -203,7 +251,7 @@ function backToSidebar() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                                 class="hover:cursor-pointer"
-                                @click="togglePinSession(session.id)"
+                                @click="requestEditSession(session)"
                             >
                                 Editar
                             </DropdownMenuItem>
@@ -339,7 +387,7 @@ function backToSidebar() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     class="hover:cursor-pointer"
-                                    @click="togglePinSession(session.id)"
+                                    @click="requestEditSession(session)"
                                 >
                                     Editar
                                 </DropdownMenuItem>
@@ -378,6 +426,53 @@ function backToSidebar() {
             </ScrollArea>
         </SheetContent>
     </Sheet>
+
+    <Dialog :open="isEditDialogOpen" @update:open="handleEditDialogOpenChange">
+        <DialogContent class="bg-surface border-white/10">
+            <DialogHeader>
+                <DialogTitle class="text-white">
+                    Editar título da sessão
+                </DialogTitle>
+            </DialogHeader>
+
+            <form class="flex flex-col gap-4" @submit.prevent="confirmEditSession">
+                <div class="flex flex-col gap-2">
+                    <Label for="session-title" class="text-white/70">
+                        Título
+                    </Label>
+                    <Input
+                        id="session-title"
+                        v-model="editTitle"
+                        type="text"
+                        placeholder="Digite o título da sessão"
+                        autocomplete="off"
+                        :disabled="isUpdatingSessionTitle"
+                        class="border-white/15 bg-white/5 text-white placeholder:text-white/40"
+                    />
+                </div>
+
+                <DialogFooter>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        :disabled="isUpdatingSessionTitle"
+                        @click="cancelEditSession"
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        type="submit"
+                        variant="gradient"
+                        :disabled="!canSaveEditTitle || isUpdatingSessionTitle"
+                    >
+                        {{
+                            isUpdatingSessionTitle ? "Salvando..." : "Salvar"
+                        }}
+                    </Button>
+                </DialogFooter>
+            </form>
+        </DialogContent>
+    </Dialog>
 
     <AlertDialog
         :open="isDeleteDialogOpen"

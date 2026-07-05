@@ -23,6 +23,7 @@ const isLoadingMessages = ref(false);
 const isSending = ref(false);
 const isSearching = ref(false);
 const isDeletingSession = ref(false);
+const isUpdatingSessionTitle = ref(false);
 const remainingCredits = ref(null);
 
 let initialized = false;
@@ -296,23 +297,33 @@ async function searchSessions(query) {
 
 async function updateSessionTitle(sessionId, title) {
   const trimmed = title.trim();
-  if (!trimmed) return null;
+  if (!trimmed) return false;
 
-  const data = await runAction(() =>
-    service.updateTitle({
-      session_id: sessionId,
-      title: trimmed,
-    }),
+  const session = sessions.value.find((item) => item.id === sessionId);
+  if (!session) return false;
+
+  if (!session.confirmed) {
+    upsertSession({ id: sessionId, title: trimmed });
+    return true;
+  }
+
+  const data = await runAction(
+    () =>
+      service.updateTitle({
+        session_id: sessionId,
+        title: trimmed,
+      }),
+    { loading: isUpdatingSessionTitle },
   );
 
-  if (!data) return null;
+  if (!data) return false;
 
   upsertSession({
     id: sessionId,
     title: data.title ?? trimmed,
   });
 
-  return data;
+  return true;
 }
 
 async function sendMessage(text, files = []) {
@@ -385,6 +396,7 @@ export function useChat() {
     isSending,
     isSearching,
     isDeletingSession,
+    isUpdatingSessionTitle,
     remainingCredits,
     clearError,
     fetchSessions,

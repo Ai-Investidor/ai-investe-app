@@ -52,10 +52,13 @@ export function chatService() {
 		return data;
 	}
 
-	async function updateTitle(params) {
+	async function updateTitle({ session_id, title }) {
 		const { data, error } = await supabase.rpc(
 			URLS.RPC_UPDATE_CHAT_SESSION_TITLE,
-			params,
+			{
+				p_session_id: session_id,
+				p_title: title,
+			},
 		);
 
 		if (error) throw error;
