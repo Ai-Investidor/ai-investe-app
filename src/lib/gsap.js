@@ -30,9 +30,12 @@ const IS_DEV = typeof import.meta !== "undefined" && import.meta.env?.DEV;
 // ── Reduced motion ─────────────────────────────────────────────
 // Respeita prefers-reduced-motion do sistema operacional.
 // Quando ativo: duração zero, sem parallax, sem smooth scroll.
+// Lido uma única vez no boot (não é reativo) — prefers-reduced-motion
+// não costuma mudar durante a sessão, e todo o resto do módulo (defaults
+// do GSAP, presets, ScrollTrigger) já é montado a partir desse valor fixo.
 export const prefersReducedMotion =
   typeof window !== "undefined" &&
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false);
 
 // ── Registro global (idempotente) ──────────────────────────────
 gsap.registerPlugin(ScrollTrigger);

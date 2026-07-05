@@ -5,9 +5,18 @@ import { gsap, ScrollTrigger, prefersReducedMotion } from "@lib/gsap";
 /**
  * Lenis Smooth Scroll — Integração com GSAP ScrollTrigger.
  *
- * Inicializa o Lenis globalmente e sincroniza com o ticker do GSAP para
- * scroll suave estilo Locomotive Scroll. Todos os ScrollTriggers existentes
- * (data-animate, data-parallax etc.) continuam funcionando automaticamente.
+ * Inicializa uma única instância de Lenis presa a `window`/`document` (padrão
+ * da lib) e sincroniza com o ticker do GSAP para suavizar o scroll da janela,
+ * estilo Locomotive Scroll. Todos os ScrollTriggers existentes (data-animate,
+ * data-parallax etc.) continuam funcionando automaticamente.
+ *
+ * Isso NÃO suaviza scroll de containers internos com overflow próprio —
+ * em particular, os componentes `ScrollArea` (chat sessions, mensagens)
+ * usam `data-lenis-prevent` de propósito, porque já gerenciam sua própria
+ * scrollbar customizada e "brigariam" com o Lenis. Layouts com
+ * `h-screen overflow-hidden` (DefaultLayout, AuthLayout em desktop) também
+ * não têm overflow em `window` — o Lenis fica pronto pra quando existir uma
+ * página real de rolagem longa.
  *
  * Smooth scroll é desativado quando o sistema pede reduced motion.
  *
