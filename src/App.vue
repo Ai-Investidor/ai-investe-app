@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 <template>
     <RouterView />
-    <Toaster richColors closeButton />
+    <Toaster richColors closeButton position="top-right" />
 </template>
 
 <style scoped></style>
