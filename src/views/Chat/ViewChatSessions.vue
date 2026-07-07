@@ -54,7 +54,7 @@ const {
     sortedSessions,
     activeSessionId,
     selectSession,
-    createSession,
+    resetActiveSession,
     togglePinSession,
     deleteSession,
     updateSessionTitle,
@@ -160,7 +160,7 @@ function selectSessionMobile(id) {
 }
 
 function createSessionMobile() {
-    createSession();
+    resetActiveSession();
     closeMobile();
 }
 
@@ -188,7 +188,7 @@ function backToSidebar() {
         <Button
             variant="gradient"
             class="h-8 gap-2 px-[15px] shrink-0"
-            @click="createSession"
+            @click="resetActiveSession"
         >
             <Plus class="size-4 text-primary shrink-0" aria-hidden="true" />
             <span class="text-paragraph-9 text-white whitespace-nowrap"

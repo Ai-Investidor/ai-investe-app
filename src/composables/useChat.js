@@ -237,6 +237,10 @@ function createSession() {
   return withMessages(session);
 }
 
+function resetActiveSession() {
+  activeSessionId.value = null;
+}
+
 async function togglePinSession(id) {
   const session = sessions.value.find((item) => item.id === id);
   if (!session) return false;
@@ -430,6 +434,7 @@ export function useChat() {
     loadSessionMessages,
     selectSession,
     createSession,
+    resetActiveSession,
     togglePinSession,
     deleteSession,
     searchSessions,
