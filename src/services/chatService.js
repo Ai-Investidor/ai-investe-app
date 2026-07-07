@@ -27,13 +27,19 @@ export function chatService() {
 		return data;
 	}
 
-	async function getSessionsPaginated({ limit, offset }) {
+	async function getSessionsPaginated({ limit, offset, sortPinnedFirst = true }) {
 		const from = offset;
 		const to = offset + limit - 1;
 
-		const { data, error, count } = await supabase
+		let queryBuilder = supabase
 			.from(URLS.TABLE_CHAT_SESSIONS)
-			.select("*", { count: "exact" })
+			.select("*", { count: "exact" });
+
+		if (sortPinnedFirst) {
+			queryBuilder = queryBuilder.order("pinned", { ascending: false });
+		}
+
+		const { data, error, count } = await queryBuilder
 			.order("updated_at", { ascending: false })
 			.order("session_id", { ascending: false })
 			.range(from, to);
@@ -42,12 +48,13 @@ export function chatService() {
 		return { sessions: data ?? [], total: count ?? 0 };
 	}
 
-	async function searchSessions({ query, limit = 50 } = {}) {
+	async function searchSessions({ query, limit = 50, sortPinnedFirst = true } = {}) {
 		const { data, error } = await supabase.rpc(
 			URLS.RPC_SEARCH_CHAT_SESSIONS,
 			{
 				p_term: query,
 				p_limit: limit,
+				p_sort_pinned_first: sortPinnedFirst,
 			},
 		);
 

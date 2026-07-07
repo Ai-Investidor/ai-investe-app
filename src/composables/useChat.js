@@ -25,6 +25,7 @@ const isDeletingSession = ref(false);
 const isUpdatingSessionTitle = ref(false);
 const isTogglingPinSession = ref(false);
 const remainingCredits = ref(null);
+const sortPinnedFirst = ref(true);
 
 let initialized = false;
 
@@ -95,11 +96,12 @@ function upsertSession(session) {
   sessions.value = next;
 }
 
-const sortedSessions = computed(() =>
-  [...sessions.value]
-    .map(withMessages)
-    .sort((a, b) => Number(b.pinned) - Number(a.pinned)),
-);
+const sortedSessions = computed(() => {
+  const mapped = sessions.value.map(withMessages);
+  return sortPinnedFirst.value
+    ? mapped.sort((a, b) => Number(b.pinned) - Number(a.pinned))
+    : mapped;
+});
 
 const activeSession = computed(() => {
   const session = sessions.value.find(
@@ -130,12 +132,15 @@ const isLoading = computed(
     isSearching.value,
 );
 
-async function fetchSessions() {
+async function fetchSessions({ sortPinnedFirst: sortPinned = true } = {}) {
+  sortPinnedFirst.value = sortPinned;
+
   const data = await runAction(
     () =>
       service.getSessionsPaginated({
         limit: SESSIONS_INITIAL_LIMIT,
         offset: 0,
+        sortPinnedFirst: sortPinned,
       }),
     { loading: isLoadingSessions },
   );
@@ -161,6 +166,7 @@ async function loadMoreSessions() {
       service.getSessionsPaginated({
         limit: SESSIONS_PAGE_SIZE,
         offset: sessionsOffset.value,
+        sortPinnedFirst: sortPinnedFirst.value,
       }),
     { loading: isLoadingMoreSessions },
   );
@@ -281,15 +287,17 @@ async function deleteSession(id) {
   return true;
 }
 
-async function searchSessions(query) {
+async function searchSessions(query, { sortPinnedFirst: sortPinned = true } = {}) {
   const trimmed = query.trim();
+  sortPinnedFirst.value = sortPinned;
+
   if (!trimmed) {
-    await fetchSessions();
+    await fetchSessions({ sortPinnedFirst: sortPinned });
     return;
   }
 
   const data = await runAction(
-    () => service.searchSessions({ query: trimmed }),
+    () => service.searchSessions({ query: trimmed, sortPinnedFirst: sortPinned }),
     { loading: isSearching },
   );
 
@@ -415,6 +423,7 @@ export function useChat() {
     isUpdatingSessionTitle,
     isTogglingPinSession,
     remainingCredits,
+    sortPinnedFirst,
     clearError,
     fetchSessions,
     loadMoreSessions,
