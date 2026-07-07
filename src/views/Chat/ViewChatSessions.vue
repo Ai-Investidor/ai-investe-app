@@ -35,6 +35,7 @@ import { prefersReducedMotion } from "@lib/gsap";
 import { cn } from "@lib/utils";
 import { computed, ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
+import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
 import Plus from "@/components/icons/Plus.vue";
@@ -248,7 +249,8 @@ function backToSidebar() {
                             "
                             @click="selectSession(session.id)"
                         >
-                            <DrawingPin
+                            <component
+                                :is="session.pinned ? DrawingPin : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',
@@ -427,7 +429,8 @@ function backToSidebar() {
                             class="group flex flex-1 min-w-0 items-center gap-2 h-9 text-left hover:cursor-pointer"
                             @click="selectSessionMobile(session.id)"
                         >
-                            <DrawingPin
+                            <component
+                                :is="session.pinned ? DrawingPin : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',

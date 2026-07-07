@@ -14,7 +14,6 @@ const { error, runAction, clearError } = useAsyncAction({
 const sessions = ref([]);
 const messagesBySessionId = ref({});
 const activeSessionId = ref(null);
-const pinnedSessionIds = ref(new Set());
 const isLoadingSessions = ref(false);
 const isLoadingMoreSessions = ref(false);
 const hasMoreSessions = ref(false);
@@ -24,6 +23,7 @@ const isSending = ref(false);
 const isSearching = ref(false);
 const isDeletingSession = ref(false);
 const isUpdatingSessionTitle = ref(false);
+const isTogglingPinSession = ref(false);
 const remainingCredits = ref(null);
 
 let initialized = false;
@@ -53,7 +53,7 @@ function mapSession(row) {
   return {
     id,
     title: row.title ?? "Nova interação",
-    pinned: pinnedSessionIds.value.has(id),
+    pinned: row.pinned ?? false,
     updatedAt: row.updated_at ?? null,
     confirmed: true,
   };
@@ -66,7 +66,6 @@ function mapMessages(rows = []) {
 function withMessages(session) {
   return {
     ...session,
-    pinned: pinnedSessionIds.value.has(session.id),
     messages: messagesBySessionId.value[session.id] ?? [],
   };
 }
@@ -232,13 +231,26 @@ function createSession() {
   return withMessages(session);
 }
 
-function togglePinSession(id) {
-  const next = new Set(pinnedSessionIds.value);
+async function togglePinSession(id) {
+  const session = sessions.value.find((item) => item.id === id);
+  if (!session) return false;
 
-  if (next.has(id)) next.delete(id);
-  else next.add(id);
+  const nextPinned = !session.pinned;
 
-  pinnedSessionIds.value = next;
+  if (!session.confirmed) {
+    upsertSession({ id, pinned: nextPinned });
+    return true;
+  }
+
+  const data = await runAction(
+    () => service.updatePin({ session_id: id, pinned: nextPinned }),
+    { loading: isTogglingPinSession },
+  );
+
+  if (!data) return false;
+
+  upsertSession({ id, pinned: data.pinned ?? nextPinned });
+  return true;
 }
 
 function removeSessionLocally(id) {
@@ -246,12 +258,6 @@ function removeSessionLocally(id) {
 
   const { [id]: _, ...rest } = messagesBySessionId.value;
   messagesBySessionId.value = rest;
-
-  if (pinnedSessionIds.value.has(id)) {
-    const next = new Set(pinnedSessionIds.value);
-    next.delete(id);
-    pinnedSessionIds.value = next;
-  }
 
   if (activeSessionId.value === id) {
     activeSessionId.value = null;
@@ -354,10 +360,17 @@ async function sendMessage(text, files = []) {
     upsertSession({
       id: response.session_id,
       title: session.title,
+      pinned: session.pinned,
       confirmed: true,
     });
     setSessionMessages(response.session_id, messages);
     activeSessionId.value = response.session_id;
+
+    if (session.pinned) {
+      runAction(() =>
+        service.updatePin({ session_id: response.session_id, pinned: true }),
+      );
+    }
   } else {
     upsertSession({ id: session.id, confirmed: true });
   }
@@ -400,6 +413,7 @@ export function useChat() {
     isSearching,
     isDeletingSession,
     isUpdatingSessionTitle,
+    isTogglingPinSession,
     remainingCredits,
     clearError,
     fetchSessions,

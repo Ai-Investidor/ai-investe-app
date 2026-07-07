@@ -68,6 +68,19 @@ export function chatService() {
 		return data;
 	}
 
+	async function updatePin({ session_id, pinned }) {
+		const { data, error } = await supabase.rpc(
+			URLS.RPC_UPDATE_CHAT_SESSION_PIN,
+			{
+				p_session_id: session_id,
+				p_pinned: pinned,
+			},
+		);
+
+		if (error) throw error;
+		return data;
+	}
+
 	async function deleteSession({ session_id }) {
 		const { data, error } = await supabase.rpc(URLS.RPC_DELETE_SESSION, {
 			p_session_id: session_id,
@@ -103,6 +116,7 @@ export function chatService() {
 		getSessionsPaginated,
 		searchSessions,
 		updateTitle,
+		updatePin,
 		deleteSession,
 		getMessagesPaginated,
 	};
