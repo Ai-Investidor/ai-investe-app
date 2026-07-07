@@ -20,7 +20,8 @@ const { toggle: toggleMobileSidebar } = useMobileSidebar();
 const { searchSessions, isSearching } = useChat();
 
 const router = useRouter();
-const { signOut, isAuthenticated } = useAuth();
+const { signOut, isAuthenticated, userAvatarUrl, userDisplayName, userInitial } =
+    useAuth();
 
 const searchQuery = ref("");
 
@@ -107,9 +108,10 @@ const handleLogout = async () => {
 
             <!-- Profile Section -->
             <UserProfile
-                name="Frederico"
+                :name="userDisplayName"
                 plan="Plano X"
-                initial="F"
+                :initial="userInitial"
+                :avatar-url="userAvatarUrl"
                 @logout="handleLogout"
             />
         </div>

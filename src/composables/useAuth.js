@@ -91,10 +91,32 @@ export function useAuth() {
   const { session, user, isAuthenticated } = storeToRefs(authStore);
   const ready = initialize(authStore);
 
+  const userAvatarUrl = computed(
+    () =>
+      user.value?.user_metadata?.avatar_url ||
+      user.value?.user_metadata?.picture ||
+      null,
+  );
+
+  const userDisplayName = computed(
+    () =>
+      user.value?.user_metadata?.full_name ||
+      user.value?.user_metadata?.name ||
+      user.value?.email ||
+      "Usuário",
+  );
+
+  const userInitial = computed(() =>
+    userDisplayName.value.charAt(0).toUpperCase(),
+  );
+
   return {
     user,
     session,
     isAuthenticated,
+    userAvatarUrl,
+    userDisplayName,
+    userInitial,
     error,
     isLoading,
     isSigningIn,

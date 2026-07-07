@@ -1,6 +1,6 @@
 <script setup>
 import { cn } from "@lib/utils";
-import { Avatar, AvatarFallback } from "@components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,6 +15,7 @@ const props = defineProps({
     name: { type: String, required: true },
     plan: { type: String, required: true },
     initial: { type: String, required: true },
+    avatarUrl: { type: String, default: null },
     class: { type: String, default: "" },
 });
 
@@ -45,6 +46,11 @@ defineEmits(["profile", "logout"]);
                     </p>
                 </div>
                 <Avatar class="h-8 w-8">
+                    <AvatarImage
+                        v-if="avatarUrl"
+                        :src="avatarUrl"
+                        alt="Foto de perfil"
+                    />
                     <AvatarFallback
                         class="bg-primary text-black text-sm font-medium"
                     >

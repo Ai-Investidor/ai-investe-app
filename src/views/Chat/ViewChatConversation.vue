@@ -1,5 +1,5 @@
 <script setup>
-import { Avatar, AvatarFallback } from "@components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@components/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
 	InputGroupInput,
 } from "@components/input-group";
 import { ScrollArea } from "@components/scroll-area";
+import { useAuth } from "@composables/useAuth.js";
 import { useChat } from "@composables/useChat";
 import { renderMarkdown } from "@utils/renderMarkdown.js";
 import { useDebounceFn } from "@vueuse/core";
@@ -74,6 +75,7 @@ function onAttachedFilesSwiperDestroy() {
 }
 
 const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
+const { userAvatarUrl } = useAuth();
 
 const inputText = ref("");
 const fileInputRef = ref(null);
@@ -261,12 +263,18 @@ watch(
                         >
                             AI
                         </AvatarFallback>
-                        <AvatarFallback
-                            v-else
-                            class="bg-secondary text-white text-sm font-medium"
-                        >
-                            F
-                        </AvatarFallback>
+                        <template v-else>
+                            <AvatarImage
+                                v-if="userAvatarUrl"
+                                :src="userAvatarUrl"
+                                alt="Foto de perfil"
+                            />
+                            <AvatarFallback
+                                class="bg-secondary text-white text-sm font-medium"
+                            >
+                                F
+                            </AvatarFallback>
+                        </template>
                     </Avatar>
 
                     <div
