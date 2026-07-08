@@ -15,7 +15,7 @@ import {
 import { ScrollArea } from "@components/scroll-area";
 import { useAuth } from "@composables/useAuth.js";
 import { useChat } from "@composables/useChat";
-import { renderMarkdown } from "@utils/renderMarkdown.js";
+import ChatMarkdown from "@/components/ChatMarkdown/ChatMarkdown.vue";
 import { useDebounceFn } from "@vueuse/core";
 import { A11y, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -95,6 +95,8 @@ const scrollAreaRef = ref(null);
 const viewportEl = ref(null);
 const isAtBottom = ref(true);
 const isScrolling = ref(false);
+/** Mantém o scroll no fim enquanto o usuário não rolar pra cima manualmente. */
+const stickToBottom = ref(true);
 
 const SCROLL_THRESHOLD = 48;
 
@@ -136,6 +138,7 @@ const onScrollEnd = useDebounceFn(() => {
 function onScroll() {
     isScrolling.value = true;
     updateScrollState();
+    stickToBottom.value = isAtBottom.value;
     onScrollEnd();
 }
 
@@ -149,16 +152,25 @@ function bindViewport() {
     updateScrollState();
 }
 
-function scrollToBottom() {
-    const el = viewportEl.value;
+function scrollToBottom(behavior = "smooth") {
+    const el = viewportEl.value ?? getViewport();
     if (!el) return;
 
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    el.scrollTo({ top: el.scrollHeight, behavior });
+    isAtBottom.value = true;
+    stickToBottom.value = true;
+}
+
+function scrollToBottomAfterUpdate(behavior = "auto") {
+    nextTick(() => {
+        requestAnimationFrame(() => scrollToBottom(behavior));
+    });
 }
 
 function handleSubmit() {
     if (!canSubmit.value) return;
 
+    stickToBottom.value = true;
     sendMessage(inputText.value, [...attachedFiles.value]);
     inputText.value = "";
     attachedFiles.value = [];
@@ -166,6 +178,8 @@ function handleSubmit() {
     if (fileInputRef.value) {
         fileInputRef.value.value = "";
     }
+
+    scrollToBottomAfterUpdate();
 }
 
 function openFilePicker() {
@@ -242,14 +256,40 @@ onUnmounted(() => {
 });
 
 watch(
+    () => activeSession.value?.id,
+    () => {
+        stickToBottom.value = true;
+        nextTick(() => {
+            bindViewport();
+            scrollToBottomAfterUpdate();
+        });
+    },
+);
+
+watch(isLoadingMessages, (loading) => {
+    if (loading) return;
+
+    stickToBottom.value = true;
+    nextTick(() => {
+        bindViewport();
+        scrollToBottomAfterUpdate();
+    });
+});
+
+watch(
     () => [
-        activeSession.value?.id,
         messages.value,
         isSending.value,
-        isLoadingMessages.value,
+        status.value,
+        showTypingIndicator.value,
     ],
     () => {
-        nextTick(updateScrollState);
+        if (!stickToBottom.value) {
+            nextTick(updateScrollState);
+            return;
+        }
+
+        scrollToBottomAfterUpdate();
     },
 );
 
@@ -351,10 +391,13 @@ watch(
                             >
                                 {{ messageText(message) }}
                             </p>
-                            <div
+                            <ChatMarkdown
                                 v-else
-                                class="chat-prose text-paragraph-10 text-white text-left min-w-0 max-w-full break-words"
-                                v-html="renderMarkdown(messageText(message))"
+                                :content="messageText(message)"
+                                :streaming="
+                                    status === 'streaming' &&
+                                    message.id === lastMessage?.id
+                                "
                             />
                             <p
                                 v-if="message.metadata?.news"

@@ -432,7 +432,7 @@
         @apply text-chat-prose-strong text-white/95;
     }
 
-    .chat-prose pre {
+    .chat-prose pre:not(.mermaid) {
         @apply text-paragraph-3;
         max-width: 100%;
         overflow-x: auto;
@@ -455,9 +455,10 @@
 
     .chat-prose table {
         @apply text-paragraph-3;
-        width: 100%;
+        width: auto;
+        max-width: 100%;
         border-collapse: collapse;
-        margin: 0.65rem 0;
+        margin: 0.65rem auto;
         line-height: var(--leading-chat-prose);
     }
 
@@ -465,7 +466,7 @@
     .chat-prose td {
         padding: 0.35rem 0.55rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        text-align: left;
+        text-align: center;
     }
 
     .chat-prose th {
@@ -475,5 +476,28 @@
 
     .chat-prose img {
         max-width: 100%;
+    }
+
+    .chat-prose .mermaid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        min-height: 12rem;
+        margin: 0.85rem auto;
+        overflow-x: auto;
+        background: transparent;
+        padding: 0;
+        line-height: normal;
+    }
+
+    .chat-prose .mermaid svg {
+        display: block;
+        width: 100%;
+        min-width: min(100%, 18rem);
+        min-height: 12rem;
+        height: auto;
+        margin-inline: auto;
     }
 }
