@@ -156,7 +156,10 @@ function scrollToBottom(behavior = "smooth") {
     const el = viewportEl.value ?? getViewport();
     if (!el) return;
 
-    el.scrollTo({ top: el.scrollHeight, behavior });
+    const scrollBehavior =
+        behavior === "auto" || behavior === "smooth" ? behavior : "smooth";
+
+    el.scrollTo({ top: el.scrollHeight, behavior: scrollBehavior });
     isAtBottom.value = true;
     stickToBottom.value = true;
 }
@@ -498,7 +501,7 @@ watch(
                     type="button"
                     class="absolute bottom-4 left-1/2 z-20 flex size-10 -translate-x-1/2 items-center justify-center rounded-full border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] text-white/55 hover:text-white"
                     aria-label="Ir para o final da conversa"
-                    @click="scrollToBottom"
+                    @click="() => scrollToBottom('smooth')"
                 >
                     <ArrowDown class="size-4" aria-hidden="true" />
                 </button>
