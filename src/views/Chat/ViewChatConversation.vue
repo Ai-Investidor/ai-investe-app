@@ -77,7 +77,15 @@ function onAttachedFilesSwiperDestroy() {
     attachedFilesSwiper.value = null;
 }
 
-const { activeSession, sendMessage, isSending, isLoadingMessages } = useChat();
+const {
+    activeSession,
+    sendMessage,
+    isSending,
+    isLoadingMessages,
+    messages,
+    status,
+    formatTime,
+} = useChat();
 const { userAvatarUrl } = useAuth();
 
 const inputText = ref("");
@@ -185,6 +193,46 @@ async function copyMessageContent(content) {
     }
 }
 
+// Cache local (não-reativo) de horários de mensagens que chegam via streaming
+// puro, sem `metadata.time` do backend — evita recalcular a cada render.
+const displayTimes = {};
+
+function messageText(message) {
+    return (
+        message.parts
+            ?.filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("") ?? ""
+    );
+}
+
+function messageTime(message) {
+    if (message.metadata?.time) return message.metadata.time;
+    if (!displayTimes[message.id]) displayTimes[message.id] = formatTime();
+    return displayTimes[message.id];
+}
+
+const lastMessage = computed(() => messages.value[messages.value.length - 1]);
+
+const visibleMessages = computed(() =>
+    messages.value.filter(
+        (message) => message.role === "user" || messageText(message).length > 0,
+    ),
+);
+
+const showTypingIndicator = computed(() => {
+    if (status.value === "submitted") return true;
+    if (status.value === "streaming") {
+        return (
+            lastMessage.value?.role !== "assistant" ||
+            messageText(lastMessage.value).length === 0
+        );
+    }
+    // Fallback multipart (anexos): sem streaming, mostra "digitando" até a
+    // resposta completa chegar.
+    return isSending.value;
+});
+
 onMounted(() => {
     nextTick(bindViewport);
 });
@@ -196,7 +244,7 @@ onUnmounted(() => {
 watch(
     () => [
         activeSession.value?.id,
-        activeSession.value?.messages?.length,
+        messages.value,
         isSending.value,
         isLoadingMessages.value,
     ],
@@ -259,7 +307,7 @@ watch(
                     :class="['flex flex-col gap-5 py-4', chatColumnClass]"
                 >
                     <li
-                        v-for="message in activeSession?.messages ?? []"
+                        v-for="message in visibleMessages"
                         :key="message.id"
                         :class="[
                             'flex w-full min-w-0 max-w-full gap-3 items-start',
@@ -301,18 +349,18 @@ watch(
                                 v-if="message.role === 'user'"
                                 class="text-paragraph-10 text-white whitespace-pre-wrap break-words text-right"
                             >
-                                {{ message.content }}
+                                {{ messageText(message) }}
                             </p>
                             <div
                                 v-else
-                                class="text-paragraph-10 text-white text-left min-w-0 max-w-full break-words [&_p]:whitespace-pre-wrap [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_code]:break-words [&_img]:max-w-full"
-                                v-html="renderMarkdown(message.content)"
+                                class="chat-prose text-paragraph-10 text-white text-left min-w-0 max-w-full break-words"
+                                v-html="renderMarkdown(messageText(message))"
                             />
                             <p
-                                v-if="message.news"
+                                v-if="message.metadata?.news"
                                 class="text-paragraph-3 text-white/55 text-left border-t border-card-border pt-3 w-full"
                             >
-                                Notícias relacionadas: {{ message.news }}
+                                Notícias relacionadas: {{ message.metadata.news }}
                             </p>
                             <div
                                 :class="[
@@ -326,9 +374,9 @@ watch(
                                 />
                                 <time
                                     class="text-paragraph-3 text-white/55"
-                                    :datetime="message.time"
+                                    :datetime="messageTime(message)"
                                 >
-                                    {{ message.time }}
+                                    {{ messageTime(message) }}
                                 </time>
 
                                 <DropdownMenu
@@ -351,7 +399,7 @@ watch(
                                             class="hover:cursor-pointer"
                                             @click="
                                                 copyMessageContent(
-                                                    message.content,
+                                                    messageText(message),
                                                 )
                                             "
                                         >
@@ -365,7 +413,7 @@ watch(
                     </li>
 
                     <li
-                        v-if="isSending"
+                        v-if="showTypingIndicator"
                         class="flex gap-3 items-start self-start"
                         role="status"
                         aria-label="A IA está digitando"
@@ -542,3 +590,93 @@ watch(
         </p>
     </section>
 </template>
+
+<style scoped>
+.chat-prose {
+    line-height: 1.65;
+}
+
+.chat-prose :deep(p) {
+    margin-bottom: 0.85rem;
+    white-space: pre-wrap;
+}
+
+.chat-prose :deep(p:last-child) {
+    margin-bottom: 0;
+}
+
+.chat-prose :deep(h1),
+.chat-prose :deep(h2),
+.chat-prose :deep(h3),
+.chat-prose :deep(h4) {
+    line-height: 1.25;
+    margin-top: 1.25rem;
+    margin-bottom: 0.65rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.chat-prose :deep(h2) {
+    font-size: 1.2em;
+}
+
+.chat-prose :deep(h3) {
+    font-size: 1.08em;
+    font-weight: 600;
+}
+
+.chat-prose :deep(ul),
+.chat-prose :deep(ol) {
+    margin: 0.55rem 0 0.85rem 1.25rem;
+    padding-left: 0.25rem;
+}
+
+.chat-prose :deep(li) {
+    margin-bottom: 0.35rem;
+}
+
+.chat-prose :deep(li::marker) {
+    color: hsl(var(--primary));
+}
+
+.chat-prose :deep(strong) {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.chat-prose :deep(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0.65rem 0;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.chat-prose :deep(code) {
+    word-break: break-word;
+}
+
+.chat-prose :deep(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.65rem 0;
+    font-size: 0.92em;
+}
+
+.chat-prose :deep(th),
+.chat-prose :deep(td) {
+    padding: 0.35rem 0.55rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+}
+
+.chat-prose :deep(th) {
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.chat-prose :deep(img) {
+    max-width: 100%;
+}
+</style>

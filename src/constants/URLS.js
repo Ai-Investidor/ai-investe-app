@@ -2,6 +2,7 @@
 export const URLS = {
 	// API backend
 	CHAT_SEND: "/chat",
+	CHAT_STREAM: "/chat/stream",
 
 	// Tables
 	TABLE_CHAT_SESSIONS: "chat_sessions",

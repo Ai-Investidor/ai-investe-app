@@ -3,7 +3,7 @@
 import { useAuthStore } from "@stores/auth.js";
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_BASE_URL_API?.replace(/\/$/, "");
+export const baseURL = import.meta.env.VITE_BASE_URL_API?.replace(/\/$/, "");
 
 if (!baseURL) {
 	throw new Error("[axios] VITE_BASE_URL_API é obrigatório no .env");
@@ -19,13 +19,13 @@ export const api = axios.create({
 
 // `useAuthStore()` só é chamado aqui dentro (nunca no topo do módulo), pois só
 // roda por requisição, depois que o boot do Pinia já ativou a store global.
-api.interceptors.request.use((config) => {
+export function getAuthHeaders() {
 	const token = useAuthStore().session?.access_token;
+	return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-
+api.interceptors.request.use((config) => {
+	Object.assign(config.headers, getAuthHeaders());
 	return config;
 });
 

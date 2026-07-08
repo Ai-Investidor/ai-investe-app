@@ -4,7 +4,7 @@ import { toast } from "vue-sonner";
 const DEFAULT_ERROR_MESSAGE =
 	"Não foi possível completar a operação. Tente novamente.";
 
-function toUserMessage(err, fallback) {
+export function toUserMessage(err, fallback = DEFAULT_ERROR_MESSAGE) {
 	const apiMessage =
 		err?.response?.data?.detail ??
 		err?.response?.data?.message ??

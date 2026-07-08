@@ -1,8 +1,17 @@
-import { api } from "@boot/modules/axios.js";
+import { api, baseURL, getAuthHeaders } from "@boot/modules/axios.js";
 import { supabase } from "@boot/modules/supabase.js";
 import { URLS } from "@constants/URLS.js";
+import { DefaultChatTransport } from "ai";
 
 export function chatService() {
+	function createStreamTransport(getBody) {
+		return new DefaultChatTransport({
+			api: `${baseURL}${URLS.CHAT_STREAM}`,
+			headers: getAuthHeaders,
+			body: getBody,
+		});
+	}
+
 	async function sendMessage({ message, session_id, files = [] }) {
 		const formData = new FormData();
 		formData.append("message", message);
@@ -118,6 +127,7 @@ export function chatService() {
 	}
 
 	return {
+		createStreamTransport,
 		sendMessage,
 		getSessions,
 		getSessionsPaginated,
