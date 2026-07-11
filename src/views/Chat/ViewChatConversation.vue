@@ -15,7 +15,11 @@ import {
 import { ScrollArea } from "@components/scroll-area";
 import { useAuth } from "@composables/useAuth.js";
 import { useChat } from "@composables/useChat";
-import ChatMarkdown from "@/components/ChatMarkdown/ChatMarkdown.vue";
+import ChatAssistantMessage from "@/components/ChatAssistantMessage/ChatAssistantMessage.vue";
+import {
+    getMessageText,
+    hasAssistantVisibleContent,
+} from "@utils/chatMessageParts.js";
 import { useDebounceFn } from "@vueuse/core";
 import { A11y, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -214,15 +218,6 @@ async function copyMessageContent(content) {
 // puro, sem `metadata.time` do backend — evita recalcular a cada render.
 const displayTimes = {};
 
-function messageText(message) {
-    return (
-        message.parts
-            ?.filter((part) => part.type === "text")
-            .map((part) => part.text)
-            .join("") ?? ""
-    );
-}
-
 function messageTime(message) {
     if (message.metadata?.time) return message.metadata.time;
     if (!displayTimes[message.id]) displayTimes[message.id] = formatTime();
@@ -232,19 +227,27 @@ function messageTime(message) {
 const lastMessage = computed(() => messages.value[messages.value.length - 1]);
 
 const visibleMessages = computed(() =>
-    messages.value.filter(
-        (message) => message.role === "user" || messageText(message).length > 0,
-    ),
+    messages.value.filter((message) => {
+        if (message.role === "user") {
+            return getMessageText(message).trim().length > 0;
+        }
+
+        return hasAssistantVisibleContent(message);
+    }),
 );
 
 const showTypingIndicator = computed(() => {
     if (status.value === "submitted") return true;
+
     if (status.value === "streaming") {
-        return (
-            lastMessage.value?.role !== "assistant" ||
-            messageText(lastMessage.value).length === 0
-        );
+        const last = lastMessage.value;
+        if (last?.role === "assistant" && hasAssistantVisibleContent(last)) {
+            return false;
+        }
+
+        return true;
     }
+
     // Fallback multipart (anexos): sem streaming, mostra "digitando" até a
     // resposta completa chegar.
     return isSending.value;
@@ -392,22 +395,16 @@ watch(
                                 v-if="message.role === 'user'"
                                 class="text-paragraph-10 text-white whitespace-pre-wrap break-words text-right"
                             >
-                                {{ messageText(message) }}
+                                {{ getMessageText(message) }}
                             </p>
-                            <ChatMarkdown
+                            <ChatAssistantMessage
                                 v-else
-                                :content="messageText(message)"
+                                :message="message"
                                 :streaming="
                                     status === 'streaming' &&
                                     message.id === lastMessage?.id
                                 "
                             />
-                            <p
-                                v-if="message.metadata?.news"
-                                class="text-paragraph-3 text-white/55 text-left border-t border-card-border pt-3 w-full"
-                            >
-                                Notícias relacionadas: {{ message.metadata.news }}
-                            </p>
                             <div
                                 :class="[
                                     'flex items-center gap-3',
@@ -445,7 +442,7 @@ watch(
                                             class="hover:cursor-pointer"
                                             @click="
                                                 copyMessageContent(
-                                                    messageText(message),
+                                                    getMessageText(message),
                                                 )
                                             "
                                         >

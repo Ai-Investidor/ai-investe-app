@@ -1,6 +1,7 @@
 import { useAsyncAction, toUserMessage } from "@composables/useAsyncAction.js";
 
 import { chatService } from "@services/chatService.js";
+import { getMessageText } from "@utils/chatMessageParts.js";
 import { useChat as useAiChat } from "@ai-sdk/vue";
 import { computed, ref } from "vue";
 import { toast } from "vue-sonner";
@@ -170,15 +171,6 @@ function handleStreamError(err) {
   toast.error(toUserMessage(err));
 }
 
-function getMessageText(message) {
-  return (
-    message?.parts
-      ?.filter((part) => part.type === "text")
-      .map((part) => part.text)
-      .join("") ?? ""
-  );
-}
-
 function applySessionMessages(sessionId, mapped) {
   setSessionHistory(sessionId, mapped);
   if (activeSessionId.value === sessionId) {
@@ -211,6 +203,14 @@ async function handleStreamFinish({ message, isError }) {
 
   const sessionId = activeSessionId.value;
   if (!sessionId || isError || message?.role !== "assistant") return;
+
+  if (metadata?.session_id) {
+    reconcileSessionId(chatInstanceId.value, metadata.session_id);
+  }
+
+  if (metadata?.news && message.metadata?.news == null) {
+    message.metadata = { ...message.metadata, news: metadata.news };
+  }
 
   if (!getMessageText(message).trim()) {
     await reconcileMessagesFromServer(sessionId);
