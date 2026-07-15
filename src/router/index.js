@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import DefaultLayout from "@layout/DefaultLayout.vue";
 import { useAuth } from "@composables/useAuth.js";
 
+const APP_NAME = "AIInveste";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -13,16 +15,19 @@ const router = createRouter({
           path: "",
           name: "chat",
           component: () => import("@pages/PageChat.vue"),
+          meta: { title: "Chat" },
         },
         {
           path: "alertas",
           name: "alerts",
           component: () => import("@pages/PageAlertas.vue"),
+          meta: { title: "Notificações" },
         },
         {
           path: "carteiras",
           name: "cards",
           component: () => import("@pages/PageCarteiras.vue"),
+          meta: { title: "Carteiras" },
         },
       ],
     },
@@ -35,21 +40,25 @@ const router = createRouter({
           path: "login",
           name: "login",
           component: () => import("@pages/PageLogin.vue"),
+          meta: { title: "Entrar" },
         },
         {
           path: "cadastro",
           name: "signup",
           component: () => import("@pages/PageSignup.vue"),
+          meta: { title: "Criar Conta" },
         },
         {
           path: "recuperar-senha",
           name: "recover-password",
           component: () => import("@pages/PageRecover.vue"),
+          meta: { title: "Recuperar Senha" },
         },
         {
           path: "nova-senha",
           name: "reset-password",
           component: () => import("@pages/PageResetPassword.vue"),
+          meta: { title: "Nova Senha" },
         },
       ],
     },
@@ -57,6 +66,7 @@ const router = createRouter({
       path: "/:pathMatch(.*)*",
       name: "not-found",
       component: () => import("@pages/PageNotFound.vue"),
+      meta: { title: "Página Não Encontrada" },
     },
   ],
 });
@@ -82,6 +92,10 @@ router.afterEach((to) => {
     const { code, ...rest } = to.query;
     router.replace({ path: to.path, query: rest });
   }
+});
+
+router.afterEach((to) => {
+  document.title = to.meta.title ? `${APP_NAME} - ${to.meta.title}` : APP_NAME;
 });
 
 export default router;
