@@ -1,16 +1,12 @@
 <script setup>
 import { ref } from "vue";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupButton,
-	InputGroupInput,
-} from "@components/input-group";
+import { InputGroupButton } from "@components/input-group";
 import { useChat } from "@composables/useChat";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
+import ChatInput from "@/components/ChatInput/ChatInput.vue";
 import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
 
 const { sendMessage, isSending } = useChat();
@@ -79,18 +75,14 @@ const suggestions = [
     </div>
 
     <!-- Input with button -->
-    <InputGroup
-      class="gap-2 w-[clamp(541px,65%,720px)] max-md:w-full h-auto bg-app-bg border-input-border rounded-lg px-6 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border"
+    <ChatInput
+      v-model="inputText"
+      placeholder="Fale com nossa IA..."
+      :disabled="isSending"
+      class="w-[clamp(541px,65%,720px)] max-md:w-full"
+      @submit="handleSubmit"
     >
-      <InputGroupInput
-        v-model="inputText"
-        type="text"
-        placeholder="Fale com nossa IA..."
-        class="text-paragraph-3 text-white/55 placeholder:text-white/55"
-        :disabled="isSending"
-        @keydown.enter="handleSubmit"
-      />
-      <InputGroupAddon align="inline-end" class="pr-0">
+      <template #end>
         <InputGroupButton
           size="sm"
           class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
@@ -99,8 +91,8 @@ const suggestions = [
         >
           ?
         </InputGroupButton>
-      </InputGroupAddon>
-    </InputGroup>
+      </template>
+    </ChatInput>
 
     <!-- Disclaimer -->
     <p class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui">

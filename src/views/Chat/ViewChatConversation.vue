@@ -7,15 +7,13 @@ import {
     DropdownMenuTrigger,
 } from "@components/dropdown-menu";
 import {
-    InputGroup,
-    InputGroupAddon,
     InputGroupButton,
-    InputGroupInput,
 } from "@components/input-group";
 import { ScrollArea } from "@components/scroll-area";
 import { useAuth } from "@composables/useAuth.js";
 import { useChat } from "@composables/useChat";
 import ChatAssistantMessage from "@/components/ChatAssistantMessage/ChatAssistantMessage.vue";
+import ChatInput from "@/components/ChatInput/ChatInput.vue";
 import {
     getMessageText,
     hasAssistantVisibleContent,
@@ -568,13 +566,14 @@ watch(
             </Swiper>
         </div>
 
-        <InputGroup
-            :class="[
-                'gap-2 h-auto shrink-0 bg-app-bg border-input-border rounded-lg px-6 max-md:px-4 py-2 has-[[data-slot=input-group-control]:focus-visible]:ring-0 has-[[data-slot=input-group-control]:focus-visible]:border-input-border',
-                chatColumnClass,
-            ]"
+        <ChatInput
+            v-model="inputText"
+            placeholder="Fale com nossa IA..."
+            :disabled="isSending || isLoadingMessages"
+            :class="['shrink-0', chatColumnClass]"
+            @submit="handleSubmit"
         >
-            <InputGroupAddon align="inline-start">
+            <template #start>
                 <DropdownMenu>
                     <DropdownMenuTrigger as-child>
                         <button
@@ -601,16 +600,8 @@ watch(
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </InputGroupAddon>
-            <InputGroupInput
-                v-model="inputText"
-                type="text"
-                placeholder="Fale com nossa IA..."
-                class="text-paragraph-10 text-white/55 placeholder:text-white/55"
-                :disabled="isSending || isLoadingMessages"
-                @keydown.enter="handleSubmit"
-            />
-            <InputGroupAddon align="inline-end" class="pr-0">
+            </template>
+            <template #end>
                 <InputGroupButton
                     size="sm"
                     class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
@@ -619,8 +610,8 @@ watch(
                 >
                     ?
                 </InputGroupButton>
-            </InputGroupAddon>
-        </InputGroup>
+            </template>
+        </ChatInput>
 
         <!-- Disclaimer -->
         <p
