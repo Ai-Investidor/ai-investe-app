@@ -6,78 +6,23 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@components/dropdown-menu";
-import {
-    InputGroupButton,
-} from "@components/input-group";
 import { ScrollArea } from "@components/scroll-area";
 import { useAuth } from "@composables/useAuth.js";
 import { useChat } from "@composables/useChat";
-import ChatAssistantMessage from "@/components/ChatAssistantMessage/ChatAssistantMessage.vue";
-import ChatInput from "@/components/ChatInput/ChatInput.vue";
+import { CHAT_COLUMN_CLASS } from "@constants/CHAT";
 import {
     getMessageText,
     hasAssistantVisibleContent,
 } from "@utils/chatMessageParts.js";
 import { useDebounceFn } from "@vueuse/core";
-import { A11y, FreeMode } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { toast } from "vue-sonner";
+import ChatAssistantMessage from "@/components/ChatAssistantMessage/ChatAssistantMessage.vue";
+import ChatComposer from "@/components/ChatComposer/ChatComposer.vue";
 import ArrowDown from "@/components/icons/ArrowDown.vue";
 import Clock from "@/components/icons/Clock.vue";
 import Copy from "@/components/icons/Copy.vue";
-import FilePlus from "@/components/icons/FilePlus.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
-import "swiper/css";
-
-const attachedFilesSwiperModules = [A11y, FreeMode];
-
-const attachedFilesFreeMode = {
-    enabled: true,
-    momentum: true,
-    momentumRatio: 1.25,
-    momentumVelocityRatio: 1.25,
-    momentumBounce: false,
-    sticky: false,
-    minimumVelocity: 0.02,
-};
-
-const chatColumnClass =
-    "w-full min-w-0 max-w-full mx-auto md:w-[clamp(541px,65%,720px)]";
-
-const attachedFilesSwiper = ref(null);
-
-function refreshAttachedFilesSwiper() {
-    if (attachedFiles.value.length === 0) return;
-
-    const swiper = attachedFilesSwiper.value;
-    if (!swiper || swiper.destroyed) return;
-
-    requestAnimationFrame(() => {
-        const instance = attachedFilesSwiper.value;
-        if (
-            !instance ||
-            instance.destroyed ||
-            attachedFiles.value.length === 0
-        ) {
-            return;
-        }
-
-        instance.update();
-        instance.updateSize();
-        instance.updateSlides();
-        instance.updateProgress();
-    });
-}
-
-function onAttachedFilesSwiper(swiper) {
-    attachedFilesSwiper.value = swiper;
-    nextTick(refreshAttachedFilesSwiper);
-}
-
-function onAttachedFilesSwiperDestroy() {
-    attachedFilesSwiper.value = null;
-}
 
 const {
     activeSession,
@@ -91,8 +36,6 @@ const {
 const { userAvatarUrl } = useAuth();
 
 const inputText = ref("");
-const fileInputRef = ref(null);
-const attachedFiles = ref([]);
 const scrollAreaRef = ref(null);
 const viewportEl = ref(null);
 const isAtBottom = ref(true);
@@ -104,13 +47,6 @@ const SCROLL_THRESHOLD = 48;
 
 const showScrollToBottom = computed(
     () => !isAtBottom.value && !isScrolling.value,
-);
-
-const canSubmit = computed(
-    () =>
-        (inputText.value.trim().length > 0 || attachedFiles.value.length > 0) &&
-        !isSending.value &&
-        !isLoadingMessages.value,
 );
 
 function getViewport() {
@@ -172,35 +108,12 @@ function scrollToBottomAfterUpdate(behavior = "auto") {
     });
 }
 
-function handleSubmit() {
-    if (!canSubmit.value) return;
-
+function handleSubmit(files) {
     stickToBottom.value = true;
-    sendMessage(inputText.value, [...attachedFiles.value]);
+    sendMessage(inputText.value, files);
     inputText.value = "";
-    attachedFiles.value = [];
-
-    if (fileInputRef.value) {
-        fileInputRef.value.value = "";
-    }
 
     scrollToBottomAfterUpdate();
-}
-
-function openFilePicker() {
-    fileInputRef.value?.click();
-}
-
-function handleFileChange(event) {
-    const files = Array.from(event.target.files ?? []);
-    if (!files.length) return;
-
-    attachedFiles.value = [...attachedFiles.value, ...files];
-    event.target.value = "";
-}
-
-function removeAttachedFile(index) {
-    attachedFiles.value = attachedFiles.value.filter((_, i) => i !== index);
 }
 
 async function copyMessageContent(content) {
@@ -296,19 +209,6 @@ watch(
         scrollToBottomAfterUpdate();
     },
 );
-
-watch(
-    attachedFiles,
-    (files) => {
-        if (!files.length) {
-            attachedFilesSwiper.value = null;
-            return;
-        }
-
-        nextTick(refreshAttachedFilesSwiper);
-    },
-    { deep: true },
-);
 </script>
 
 <template>
@@ -348,7 +248,7 @@ watch(
 
                 <ul
                     v-else
-                    :class="['flex flex-col gap-5 py-4', chatColumnClass]"
+                    :class="['flex flex-col gap-5 py-4', CHAT_COLUMN_CLASS]"
                 >
                     <li
                         v-for="message in visibleMessages"
@@ -504,120 +404,19 @@ watch(
         </div>
 
         <!-- Input with button -->
-        <input
-            id="chat-file-upload"
-            ref="fileInputRef"
-            type="file"
-            multiple
-            class="sr-only"
-            :disabled="isSending || isLoadingMessages"
-            @change="handleFileChange"
-        />
-
-        <div
-            v-if="attachedFiles.length"
-            data-lenis-prevent
-            :class="[
-                'shrink-0 overflow-hidden [contain:inline-size]',
-                chatColumnClass,
-            ]"
-            aria-label="Arquivos anexados"
-        >
-            <Swiper
-                :modules="attachedFilesSwiperModules"
-                slides-per-view="auto"
-                :space-between="8"
-                :free-mode="attachedFilesFreeMode"
-                :watch-overflow="false"
-                :threshold="5"
-                :touch-angle="30"
-                touch-release-on-edges
-                grab-cursor
-                :observer="true"
-                :observe-slide-children="true"
-                no-swiping-selector="button"
-                class="w-full max-w-full overflow-hidden"
-                @swiper="onAttachedFilesSwiper"
-                @destroy="onAttachedFilesSwiperDestroy"
-            >
-                <SwiperSlide
-                    v-for="(file, index) in attachedFiles"
-                    :key="`${file.name}-${file.lastModified}-${index}`"
-                    class="!box-border !w-36 max-md:!w-28"
-                >
-                    <div
-                        class="flex w-full min-w-0 items-center gap-2 rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 px-3 py-1.5"
-                    >
-                        <span
-                            class="min-w-0 flex-1 truncate text-paragraph-3 text-white/70"
-                        >
-                            {{ file.name }}
-                        </span>
-                        <button
-                            type="button"
-                            class="text-paragraph-3 text-white/55 hover:text-white shrink-0"
-                            :aria-label="`Remover ${file.name}`"
-                            @click="removeAttachedFile(index)"
-                        >
-                            ×
-                        </button>
-                    </div>
-                </SwiperSlide>
-            </Swiper>
-        </div>
-
-        <ChatInput
+        <ChatComposer
             v-model="inputText"
             placeholder="Fale com nossa IA..."
             :disabled="isSending || isLoadingMessages"
-            :class="['shrink-0', chatColumnClass]"
+            :class="CHAT_COLUMN_CLASS"
             @submit="handleSubmit"
-        >
-            <template #start>
-                <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                        <button
-                            type="button"
-                            aria-label="Anexar"
-                            class="flex items-center justify-center text-white/55 hover:text-white disabled:pointer-events-none disabled:opacity-50"
-                            :disabled="isSending || isLoadingMessages"
-                        >
-                            <FilePlus class="size-4" aria-hidden="true" />
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuItem
-                            as-child
-                            :disabled="isSending || isLoadingMessages"
-                        >
-                            <label
-                                for="chat-file-upload"
-                                class="w-full hover:cursor-pointer"
-                                @pointerdown.prevent.stop="openFilePicker"
-                            >
-                                Arquivos
-                            </label>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </template>
-            <template #end>
-                <InputGroupButton
-                    size="sm"
-                    class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
-                    :disabled="!canSubmit"
-                    @click="handleSubmit"
-                >
-                    ?
-                </InputGroupButton>
-            </template>
-        </ChatInput>
+        />
 
         <!-- Disclaimer -->
         <p
             :class="[
                 'text-paragraph-1 text-white/25 text-center tracking-ui shrink-0 w-full min-w-0 px-2 max-md:text-wrap',
-                chatColumnClass,
+                CHAT_COLUMN_CLASS,
             ]"
         >
             AI invest é uma IA e pode cometer erros pode cometer erros.

@@ -1,0 +1,217 @@
+<script setup>
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@components/dropdown-menu";
+import { InputGroupButton } from "@components/input-group";
+import { useChatAttachments } from "@composables/useChatAttachments";
+import { cn } from "@lib/utils";
+import { A11y, FreeMode } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { computed, nextTick, ref, useId, watch } from "vue";
+import ChatInput from "@/components/ChatInput/ChatInput.vue";
+import FilePlus from "@/components/icons/FilePlus.vue";
+import "swiper/css";
+
+defineOptions({ inheritAttrs: false });
+
+const props = defineProps({
+	modelValue: { type: String, default: "" },
+	placeholder: { type: String, default: "Fale com nossa IA..." },
+	disabled: { type: Boolean, default: false },
+	class: {
+		type: [Boolean, null, String, Object, Array],
+		required: false,
+		skipCheck: true,
+	},
+});
+
+const emit = defineEmits(["update:modelValue", "submit"]);
+
+/** Id único por instância: o componente é shared, id fixo colidiria se duas instâncias montassem juntas. */
+const fileInputId = useId();
+
+const {
+	fileInputRef,
+	attachedFiles,
+	openFilePicker,
+	handleFileChange,
+	removeAttachedFile,
+	clearAttachedFiles,
+} = useChatAttachments();
+
+const attachedFilesSwiperModules = [A11y, FreeMode];
+
+const attachedFilesFreeMode = {
+	enabled: true,
+	momentum: true,
+	momentumRatio: 1.25,
+	momentumVelocityRatio: 1.25,
+	momentumBounce: false,
+	sticky: false,
+	minimumVelocity: 0.02,
+};
+
+const attachedFilesSwiper = ref(null);
+
+const canSubmit = computed(
+	() =>
+		(props.modelValue.trim().length > 0 || attachedFiles.value.length > 0) &&
+		!props.disabled,
+);
+
+function refreshAttachedFilesSwiper() {
+	if (attachedFiles.value.length === 0) return;
+
+	const swiper = attachedFilesSwiper.value;
+	if (!swiper || swiper.destroyed) return;
+
+	requestAnimationFrame(() => {
+		const instance = attachedFilesSwiper.value;
+		if (!instance || instance.destroyed || attachedFiles.value.length === 0) {
+			return;
+		}
+
+		instance.update();
+		instance.updateSize();
+		instance.updateSlides();
+		instance.updateProgress();
+	});
+}
+
+function onAttachedFilesSwiper(swiper) {
+	attachedFilesSwiper.value = swiper;
+	nextTick(refreshAttachedFilesSwiper);
+}
+
+function onAttachedFilesSwiperDestroy() {
+	attachedFilesSwiper.value = null;
+}
+
+function handleSubmit() {
+	if (!canSubmit.value) return;
+
+	emit("submit", [...attachedFiles.value]);
+	clearAttachedFiles();
+}
+
+watch(
+	attachedFiles,
+	(files) => {
+		if (!files.length) {
+			attachedFilesSwiper.value = null;
+			return;
+		}
+
+		nextTick(refreshAttachedFilesSwiper);
+	},
+	{ deep: true },
+);
+</script>
+
+<template>
+	<input
+		:id="fileInputId"
+		ref="fileInputRef"
+		type="file"
+		multiple
+		class="sr-only"
+		:disabled="disabled"
+		@change="handleFileChange"
+	/>
+
+	<div
+		v-if="attachedFiles.length"
+		data-lenis-prevent
+		:class="cn('shrink-0 overflow-hidden [contain:inline-size]', props.class)"
+		aria-label="Arquivos anexados"
+	>
+		<Swiper
+			:modules="attachedFilesSwiperModules"
+			slides-per-view="auto"
+			:space-between="8"
+			:free-mode="attachedFilesFreeMode"
+			:watch-overflow="false"
+			:threshold="5"
+			:touch-angle="30"
+			touch-release-on-edges
+			grab-cursor
+			:observer="true"
+			:observe-slide-children="true"
+			no-swiping-selector="button"
+			class="w-full max-w-full overflow-hidden"
+			@swiper="onAttachedFilesSwiper"
+			@destroy="onAttachedFilesSwiperDestroy"
+		>
+			<SwiperSlide
+				v-for="(file, index) in attachedFiles"
+				:key="`${file.name}-${file.lastModified}-${index}`"
+				class="!box-border !w-36 max-md:!w-28"
+			>
+				<div
+					class="flex w-full min-w-0 items-center gap-2 rounded-md border border-card-border bg-gradient-to-r from-black to-surface-2 px-3 py-1.5"
+				>
+					<span class="min-w-0 flex-1 truncate text-paragraph-3 text-white/70">
+						{{ file.name }}
+					</span>
+					<button
+						type="button"
+						class="text-paragraph-3 text-white/55 hover:text-white shrink-0 cursor-pointer"
+						:aria-label="`Remover ${file.name}`"
+						@click="removeAttachedFile(index)"
+					>
+						×
+					</button>
+				</div>
+			</SwiperSlide>
+		</Swiper>
+	</div>
+
+	<ChatInput
+		:model-value="modelValue"
+		:placeholder="placeholder"
+		:disabled="disabled"
+		:class="cn('shrink-0', props.class)"
+		@update:model-value="emit('update:modelValue', $event)"
+		@submit="handleSubmit"
+	>
+		<template #start>
+			<DropdownMenu>
+				<DropdownMenuTrigger as-child>
+					<button
+						type="button"
+						aria-label="Anexar"
+						class="flex items-center justify-center text-white/55 hover:text-white cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+						:disabled="disabled"
+					>
+						<FilePlus class="size-4" aria-hidden="true" />
+					</button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="start">
+					<DropdownMenuItem as-child :disabled="disabled">
+						<label
+							:for="fileInputId"
+							class="w-full cursor-pointer"
+							@pointerdown.prevent.stop="openFilePicker"
+						>
+							Arquivos
+						</label>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</template>
+
+		<template #end>
+			<InputGroupButton
+				size="sm"
+				class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto cursor-pointer"
+				:disabled="!canSubmit"
+				@click="handleSubmit"
+			>
+				?
+			</InputGroupButton>
+		</template>
+	</ChatInput>
+</template>
