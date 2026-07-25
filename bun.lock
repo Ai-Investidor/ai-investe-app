@@ -6,6 +6,7 @@
       "name": "ai-investe-app",
       "dependencies": {
         "@ai-sdk/vue": "^4.0.17",
+        "@internationalized/date": "3.12.2",
         "@lucide/vue": "^1.21.0",
         "@supabase/supabase-js": "^2.110.0",
         "@tailwindcss/vite": "^4.3.2",

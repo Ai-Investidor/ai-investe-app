@@ -63,6 +63,12 @@ const router = createRouter({
       ],
     },
     {
+      path: "/onboarding",
+      name: "onboarding",
+      component: () => import("@pages/PageOnboarding.vue"),
+      meta: { title: "Onboarding" },
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "not-found",
       component: () => import("@pages/PageNotFound.vue"),
