@@ -78,13 +78,25 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const { isAuthenticated, ready } = useAuth();
+  const { isAuthenticated, onboardingCompleted, ready } = useAuth();
   await ready;
 
   const isAuthRoute = to.path.startsWith("/auth");
 
   if (!isAuthenticated.value && !isAuthRoute) {
     return { name: "login" };
+  }
+
+  if (isAuthenticated.value && !isAuthRoute) {
+    const isOnboardingRoute = to.name === "onboarding";
+
+    if (!onboardingCompleted.value && !isOnboardingRoute) {
+      return { name: "onboarding" };
+    }
+
+    if (onboardingCompleted.value && isOnboardingRoute) {
+      return { name: "chat" };
+    }
   }
 });
 

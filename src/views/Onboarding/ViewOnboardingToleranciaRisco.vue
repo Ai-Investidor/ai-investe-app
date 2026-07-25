@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
@@ -48,8 +48,22 @@ const toleranciaSchema = z.object({
         .min(1, "Selecione uma opção"),
 });
 
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
     validationSchema: toTypedSchema(toleranciaSchema),
+});
+
+onMounted(async () => {
+    const riskProfile = await onboardingApi.getRiskToleranceProfile();
+    if (!riskProfile) return;
+
+    resetForm({
+        values: {
+            reactionTo20PercentDrop: riskProfile.reaction_to_20_percent_drop ?? undefined,
+            guaranteedGainPreference: riskProfile.guaranteed_gain_preference ?? undefined,
+            pastBehaviorDescription: riskProfile.past_behavior_description ?? undefined,
+            painPoint: riskProfile.pain_point ?? undefined,
+        },
+    });
 });
 
 const onSubmit = handleSubmit(async (formValues) => {

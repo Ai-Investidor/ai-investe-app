@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { A11y } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -8,6 +9,8 @@ import "swiper/css";
 
 import ConstellationBackground from "@/components/ConstellationBackground/ConstellationBackground.vue";
 import { useAuth } from "@composables/useAuth.js";
+import { onboardingService } from "@services/onboardingService.js";
+import { useAuthStore } from "@stores/auth.js";
 import { useOnboardingStore } from "@stores/onboarding.js";
 import ViewOnboardingConhecimento from "@views/Onboarding/ViewOnboardingConhecimento.vue";
 import ViewOnboardingContextoPessoal from "@views/Onboarding/ViewOnboardingContextoPessoal.vue";
@@ -18,7 +21,10 @@ import ViewOnboardingPerfilProfissional from "@views/Onboarding/ViewOnboardingPe
 import ViewOnboardingReservaDividas from "@views/Onboarding/ViewOnboardingReservaDividas.vue";
 import ViewOnboardingToleranciaRisco from "@views/Onboarding/ViewOnboardingToleranciaRisco.vue";
 
-const { userDisplayName } = useAuth();
+const router = useRouter();
+const { userDisplayName, onboardingCurrentStep } = useAuth();
+const authStore = useAuthStore();
+const onboardingApi = onboardingService();
 
 const primeiroNome = computed(() => userDisplayName.value.split(" ")[0]);
 
@@ -33,8 +39,14 @@ const steps = [
     { id: "conhecimento", component: ViewOnboardingConhecimento },
 ];
 
+const initialStepIndex = Math.min(
+    Math.max(onboardingCurrentStep.value - 1, 0),
+    steps.length - 1,
+);
+
 const onboardingStore = useOnboardingStore();
 const { activeIndex, formData } = storeToRefs(onboardingStore);
+onboardingStore.setActiveIndex(initialStepIndex);
 const swiperInstance = ref(null);
 
 function onSwiper(instance) {
@@ -55,18 +67,44 @@ function goBack() {
     }
 }
 
-function onStepComplete() {
+async function onStepComplete() {
     const hasNextStep = activeIndex.value < steps.length - 1;
 
-    if (hasNextStep && swiperInstance.value && !swiperInstance.value.destroyed) {
-        swiperInstance.value.slideNext();
+    if (hasNextStep) {
+        const nextStep = activeIndex.value + 2;
+        try {
+            await onboardingApi.updateMyProfile({
+                onboardingCurrentStep: nextStep,
+            });
+            authStore.setOnboardingStatus({
+                completed: false,
+                currentStep: nextStep,
+            });
+        } catch (err) {
+            console.error("[onboarding] falha ao salvar progresso", err);
+        }
+
+        if (swiperInstance.value && !swiperInstance.value.destroyed) {
+            swiperInstance.value.slideNext();
+        }
         return;
+    }
+
+    try {
+        await onboardingApi.updateMyProfile({ onboardingCompleted: true });
+        authStore.setOnboardingStatus({
+            completed: true,
+            currentStep: steps.length,
+        });
+    } catch (err) {
+        console.error("[onboarding] falha ao concluir onboarding", err);
     }
 
     toast.success(
         "Perfil concluído! Em breve calculamos seu perfil de investidor.",
     );
     console.log("[onboarding] dados coletados:", formData.value);
+    router.push({ name: "chat" });
 }
 </script>
 
@@ -116,6 +154,7 @@ function onStepComplete() {
                 :simulate-touch="false"
                 :slides-per-view="1"
                 :space-between="0"
+                :initial-slide="initialStepIndex"
                 class="w-full max-w-2xl"
                 @swiper="onSwiper"
                 @destroy="onSwiperDestroy"

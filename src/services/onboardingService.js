@@ -16,11 +16,20 @@ export function onboardingService() {
         return data;
     }
 
-    async function updateMyProfile({ dateOfBirth, maritalStatusId }) {
+    async function updateMyProfile({
+        dateOfBirth,
+        maritalStatusId,
+        onboardingCompleted,
+        onboardingCurrentStep,
+    }) {
         const payload = {};
         if (dateOfBirth !== undefined) payload.data_nascimento = dateOfBirth;
         if (maritalStatusId !== undefined)
             payload.marital_status_id = maritalStatusId;
+        if (onboardingCompleted !== undefined)
+            payload.onboarding_completed = onboardingCompleted;
+        if (onboardingCurrentStep !== undefined)
+            payload.onboarding_current_step = onboardingCurrentStep;
 
         const { data, error } = await supabase.rpc(URLS.RPC_UPDATE_MY_PROFILE, {
             data: payload,
@@ -120,14 +129,17 @@ export function onboardingService() {
     }) {
         const { data, error } = await supabase
             .from(URLS.TABLE_MONTHLY_CASH_FLOWS)
-            .insert({
-                user_id: await currentUserId(),
-                month,
-                fixed_costs: fixedCosts,
-                variable_costs: variableCosts,
-                total_savings: totalSavings,
-                savings_rate: savingsRate,
-            })
+            .upsert(
+                {
+                    user_id: await currentUserId(),
+                    month,
+                    fixed_costs: fixedCosts,
+                    variable_costs: variableCosts,
+                    total_savings: totalSavings,
+                    savings_rate: savingsRate,
+                },
+                { onConflict: "user_id,month" },
+            )
             .select()
             .single();
         if (error) throw error;

@@ -51,8 +51,22 @@ const perfilProfissionalSchema = z.object({
         .min(0, "Informe um valor válido"),
 });
 
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
     validationSchema: toTypedSchema(perfilProfissionalSchema),
+});
+
+onMounted(async () => {
+    const financialProfile = await onboardingApi.getMyFinancialProfile();
+    if (!financialProfile?.employment_type_id && !financialProfile?.net_monthly_income) {
+        return;
+    }
+
+    resetForm({
+        values: {
+            employmentTypeId: financialProfile.employment_type_id ?? undefined,
+            netMonthlyIncome: financialProfile.net_monthly_income ?? undefined,
+        },
+    });
 });
 
 const onSubmit = handleSubmit(async (formValues) => {

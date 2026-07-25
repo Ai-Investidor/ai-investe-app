@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { FieldArray, useForm } from "vee-validate";
 import { z } from "zod";
@@ -83,9 +83,31 @@ const patrimonioSchema = z
         },
     );
 
-const { handleSubmit, values, errors } = useForm({
+const { handleSubmit, values, errors, resetForm } = useForm({
     validationSchema: toTypedSchema(patrimonioSchema),
     initialValues: { investments: [] },
+});
+
+onMounted(async () => {
+    const [netWorthData, investments] = await Promise.all([
+        onboardingApi.getNetWorth(),
+        onboardingApi.getInvestments(),
+    ]);
+
+    if (!netWorthData && !investments?.length) return;
+
+    resetForm({
+        values: {
+            totalAssets: netWorthData?.total_assets ?? undefined,
+            totalLiabilities: netWorthData?.total_liabilities ?? undefined,
+            hasInvestments: investments?.length ? "sim" : undefined,
+            investments: (investments ?? []).map((investment) => ({
+                assetName: investment.asset_name,
+                assetClass: investment.asset_class,
+                amount: investment.amount,
+            })),
+        },
+    });
 });
 
 const netWorth = computed(

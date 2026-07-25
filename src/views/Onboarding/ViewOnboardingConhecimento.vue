@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
@@ -39,8 +39,20 @@ const conhecimentoSchema = z.object({
     selfPerceptionNotes: z.string().optional(),
 });
 
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
     validationSchema: toTypedSchema(conhecimentoSchema),
+});
+
+onMounted(async () => {
+    const knowledgeProfile = await onboardingApi.getKnowledgeProfile();
+    if (!knowledgeProfile) return;
+
+    resetForm({
+        values: {
+            knowledgeLevel: knowledgeProfile.knowledge_level ?? undefined,
+            selfPerceptionNotes: knowledgeProfile.self_perception_notes ?? undefined,
+        },
+    });
 });
 
 const onSubmit = handleSubmit(async (formValues) => {

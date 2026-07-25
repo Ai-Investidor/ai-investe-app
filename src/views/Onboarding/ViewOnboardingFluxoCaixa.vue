@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
@@ -36,8 +36,30 @@ const fluxoCaixaSchema = z.object({
         .min(0, "Informe um valor válido"),
 });
 
-const { handleSubmit, values } = useForm({
+const { handleSubmit, values, resetForm } = useForm({
     validationSchema: toTypedSchema(fluxoCaixaSchema),
+});
+
+onMounted(async () => {
+    const [financialProfile, cashFlow] = await Promise.all([
+        onboardingApi.getMyFinancialProfile(),
+        onboardingApi.getLatestCashFlow(),
+    ]);
+
+    if (financialProfile?.net_monthly_income !== undefined) {
+        onboardingStore.mergeFormData({
+            netMonthlyIncome: financialProfile.net_monthly_income,
+        });
+    }
+
+    if (!cashFlow) return;
+
+    resetForm({
+        values: {
+            fixedCosts: cashFlow.fixed_costs ?? undefined,
+            variableCosts: cashFlow.variable_costs ?? undefined,
+        },
+    });
 });
 
 const netMonthlyIncome = computed(

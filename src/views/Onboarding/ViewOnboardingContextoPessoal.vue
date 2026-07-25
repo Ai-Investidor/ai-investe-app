@@ -103,9 +103,30 @@ const contextoPessoalSchema = z
         },
     );
 
-const { handleSubmit, values, errors } = useForm({
+const { handleSubmit, values, errors, resetForm } = useForm({
     validationSchema: toTypedSchema(contextoPessoalSchema),
     initialValues: { dependents: [] },
+});
+
+onMounted(async () => {
+    const [profile, dependents] = await Promise.all([
+        onboardingApi.getMyProfile(),
+        onboardingApi.getDependents(),
+    ]);
+
+    if (!profile?.data_nascimento && !dependents?.length) return;
+
+    resetForm({
+        values: {
+            dateOfBirth: profile?.data_nascimento ?? "",
+            maritalStatusId: profile?.marital_status_id ?? undefined,
+            hasDependents: dependents?.length ? "sim" : undefined,
+            dependents: (dependents ?? []).map((dependent) => ({
+                relationship: dependent.relationship,
+                birthDate: dependent.birth_date,
+            })),
+        },
+    });
 });
 
 const onSubmit = handleSubmit(async (formValues) => {

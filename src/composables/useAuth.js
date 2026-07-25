@@ -2,10 +2,12 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 
 import { authService } from "@services/authService.js";
+import { onboardingService } from "@services/onboardingService.js";
 import { useAsyncAction } from "@composables/useAsyncAction.js";
 import { useAuthStore } from "@stores/auth.js";
 
 const service = authService();
+const onboardingApi = onboardingService();
 const { error, runAction, clearError } = useAsyncAction({ logLabel: "useAuth" });
 
 const isSigningIn = ref(false);
@@ -24,6 +26,21 @@ const isLoading = computed(
     isLoadingSession.value,
 );
 
+async function refreshOnboardingStatus(authStore) {
+  if (!authStore.session) {
+    authStore.setOnboardingStatus({ completed: false, currentStep: 1 });
+    return;
+  }
+
+  const profile = await runAction(() => onboardingApi.getMyProfile());
+  if (profile) {
+    authStore.setOnboardingStatus({
+      completed: profile.onboarding_completed,
+      currentStep: profile.onboarding_current_step,
+    });
+  }
+}
+
 // `useAuthStore()` só pode ser chamado depois que o boot do Pinia rodar,
 // por isso nunca é acessado no topo do módulo — só dentro das funções abaixo,
 // que só executam em tempo de navegação/interação (após o app montar).
@@ -36,9 +53,11 @@ function initialize(authStore) {
       loading: isLoadingSession,
     });
     authStore.setSession(current);
+    await refreshOnboardingStatus(authStore);
 
-    service.onAuthStateChange((_event, nextSession) => {
+    service.onAuthStateChange(async (_event, nextSession) => {
       authStore.setSession(nextSession);
+      await refreshOnboardingStatus(authStore);
     });
   })();
 
@@ -88,7 +107,8 @@ async function signOut() {
 
 export function useAuth() {
   const authStore = useAuthStore();
-  const { session, user, isAuthenticated } = storeToRefs(authStore);
+  const { session, user, isAuthenticated, onboardingCompleted, onboardingCurrentStep } =
+    storeToRefs(authStore);
   const ready = initialize(authStore);
 
   const userAvatarUrl = computed(
@@ -114,6 +134,8 @@ export function useAuth() {
     user,
     session,
     isAuthenticated,
+    onboardingCompleted,
+    onboardingCurrentStep,
     userAvatarUrl,
     userDisplayName,
     userInitial,

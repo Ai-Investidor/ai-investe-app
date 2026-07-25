@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { FieldArray, useForm } from "vee-validate";
 import { z } from "zod";
@@ -74,9 +74,29 @@ const objetivosSchema = z.object({
         .min(1, "Adicione ao menos um objetivo"),
 });
 
-const { handleSubmit, errors } = useForm({
+const { handleSubmit, errors, resetForm } = useForm({
     validationSchema: toTypedSchema(objetivosSchema),
     initialValues: { goals: [] },
+});
+
+onMounted(async () => {
+    const goals = await onboardingApi.getGoals();
+    if (!goals?.length) return;
+
+    resetForm({
+        values: {
+            goals: goals.map((goal) => ({
+                title: goal.title,
+                category: goal.category,
+                targetAmount: goal.target_amount,
+                deadline: goal.deadline,
+            })),
+        },
+    });
+    mainGoalIndex.value = Math.max(
+        goals.findIndex((goal) => goal.is_main),
+        0,
+    );
 });
 
 const onSubmit = handleSubmit(async (formValues) => {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { toTypedSchema } from "@vee-validate/zod";
 import { FieldArray, useForm } from "vee-validate";
 import { z } from "zod";
@@ -91,9 +91,33 @@ const reservaDividasSchema = z
         },
     );
 
-const { handleSubmit, values, errors } = useForm({
+const { handleSubmit, values, errors, resetForm } = useForm({
     validationSchema: toTypedSchema(reservaDividasSchema),
     initialValues: { debts: [] },
+});
+
+onMounted(async () => {
+    const [reserve, debts] = await Promise.all([
+        onboardingApi.getEmergencyReserve(),
+        onboardingApi.getDebts(),
+    ]);
+
+    if (!reserve && !debts?.length) return;
+
+    resetForm({
+        values: {
+            reserveAmount: reserve?.amount ?? undefined,
+            monthsCovered: reserve?.months_covered ?? undefined,
+            allocation: reserve?.allocation ?? undefined,
+            hasDebts: debts?.length ? "sim" : undefined,
+            debts: (debts ?? []).map((debt) => ({
+                name: debt.name,
+                type: debt.type,
+                balance: debt.balance,
+                interestRate: debt.interest_rate,
+            })),
+        },
+    });
 });
 
 const onSubmit = handleSubmit(async (formValues) => {
