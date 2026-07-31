@@ -7,10 +7,11 @@ import {
 } from "@components/dropdown-menu";
 import { InputGroupButton } from "@components/input-group";
 import { useChatAttachments } from "@composables/useChatAttachments";
+import { CHAT_DOC_ACCEPT, CHAT_IMAGE_ACCEPT } from "@constants/CHAT";
 import { cn } from "@lib/utils";
 import { A11y, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { computed, nextTick, ref, useId, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import ChatInput from "@/components/ChatInput/ChatInput.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 import "swiper/css";
@@ -30,13 +31,12 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", "submit"]);
 
-/** Id único por instância: o componente é shared, id fixo colidiria se duas instâncias montassem juntas. */
-const fileInputId = useId();
-
 const {
-	fileInputRef,
+	docInputRef,
+	imageInputRef,
 	attachedFiles,
-	openFilePicker,
+	openDocPicker,
+	openImagePicker,
 	handleFileChange,
 	removeAttachedFile,
 	clearAttachedFiles,
@@ -113,11 +113,21 @@ watch(
 
 <template>
 	<input
-		:id="fileInputId"
-		ref="fileInputRef"
+		ref="docInputRef"
 		type="file"
 		multiple
 		class="sr-only"
+		:accept="CHAT_DOC_ACCEPT"
+		:disabled="disabled"
+		@change="handleFileChange"
+	/>
+
+	<input
+		ref="imageInputRef"
+		type="file"
+		multiple
+		class="sr-only"
+		:accept="CHAT_IMAGE_ACCEPT"
 		:disabled="disabled"
 		@change="handleFileChange"
 	/>
@@ -189,15 +199,20 @@ watch(
 						<FilePlus class="size-4" aria-hidden="true" />
 					</button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start">
-					<DropdownMenuItem as-child :disabled="disabled">
-						<label
-							:for="fileInputId"
-							class="w-full cursor-pointer"
-							@pointerdown.prevent.stop="openFilePicker"
-						>
-							Arquivos
-						</label>
+				<DropdownMenuContent align="start" class="min-w-40">
+					<DropdownMenuItem
+						class="hover:cursor-pointer"
+						:disabled="disabled"
+						@select="openDocPicker"
+					>
+						Documento
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						class="hover:cursor-pointer"
+						:disabled="disabled"
+						@select="openImagePicker"
+					>
+						Imagem
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>

@@ -8,3 +8,9 @@
  */
 export const CHAT_COLUMN_CLASS =
 	"w-[clamp(541px,65%,720px)] min-w-0 max-w-full mx-auto max-md:w-full";
+
+/** Tipos aceitos em cada picker do menu de anexos, espelhando a base anterior. */
+export const CHAT_DOC_ACCEPT =
+	".pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.ppt,.pptx";
+
+export const CHAT_IMAGE_ACCEPT = "image/*";
