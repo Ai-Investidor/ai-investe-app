@@ -7,7 +7,11 @@ import {
 } from "@components/dropdown-menu";
 import { InputGroupButton } from "@components/input-group";
 import { useChatAttachments } from "@composables/useChatAttachments";
-import { CHAT_DOC_ACCEPT, CHAT_IMAGE_ACCEPT } from "@constants/CHAT";
+import {
+	CHAT_DOC_ACCEPT,
+	CHAT_IMAGE_ACCEPT,
+	CHAT_PLACEHOLDER,
+} from "@constants/CHAT";
 import { cn } from "@lib/utils";
 import { A11y, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -20,7 +24,7 @@ defineOptions({ inheritAttrs: false });
 
 const props = defineProps({
 	modelValue: { type: String, default: "" },
-	placeholder: { type: String, default: "Fale com nossa IA..." },
+	placeholder: { type: String, default: CHAT_PLACEHOLDER },
 	disabled: { type: Boolean, default: false },
 	class: {
 		type: [Boolean, null, String, Object, Array],
@@ -229,4 +233,15 @@ watch(
 			</InputGroupButton>
 		</template>
 	</ChatInput>
+
+	<p
+		:class="
+			cn(
+				'shrink-0 px-2 text-paragraph-1 text-white/25 text-center tracking-ui text-nowrap max-md:text-wrap',
+				props.class,
+			)
+		"
+	>
+		AI invest é uma IA e pode cometer erros.
+	</p>
 </template>

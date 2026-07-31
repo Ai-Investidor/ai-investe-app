@@ -413,20 +413,9 @@ watch(
         <!-- Input with button -->
         <ChatComposer
             v-model="inputText"
-            placeholder="Fale com nossa IA..."
             :disabled="isSending || isLoadingMessages"
             :class="CHAT_COLUMN_CLASS"
             @submit="handleSubmit"
         />
-
-        <!-- Disclaimer -->
-        <p
-            :class="[
-                'text-paragraph-1 text-white/25 text-center tracking-ui shrink-0 w-full min-w-0 px-2 max-md:text-wrap',
-                CHAT_COLUMN_CLASS,
-            ]"
-        >
-            AI invest é uma IA e pode cometer erros pode cometer erros.
-        </p>
     </section>
 </template>

@@ -77,15 +77,9 @@ const suggestions = [
     <!-- Input with button -->
     <ChatComposer
       v-model="inputText"
-      placeholder="Fale com nossa IA..."
       :disabled="isSending"
       :class="CHAT_COLUMN_CLASS"
       @submit="handleSubmit"
     />
-
-    <!-- Disclaimer -->
-    <p class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui">
-      AI invest é uma IA e pode cometer erros pode cometer erros.
-    </p>
   </section>
 </template>
