@@ -260,7 +260,14 @@ watch(
                                 : 'self-start',
                         ]"
                     >
-                        <Avatar class="size-8 shrink-0">
+                        <Avatar
+                            :class="[
+                                'size-8 shrink-0',
+                                message.role === 'user'
+                                    ? '-mr-11 max-md:mr-0'
+                                    : '-ml-11 max-md:ml-0',
+                            ]"
+                        >
                             <AvatarFallback
                                 v-if="message.role === 'assistant'"
                                 class="bg-primary text-black text-sm font-medium"
@@ -359,7 +366,7 @@ watch(
                         role="status"
                         aria-label="A IA está digitando"
                     >
-                        <Avatar class="size-8 shrink-0">
+                        <Avatar class="size-8 shrink-0 -ml-11 max-md:ml-0">
                             <AvatarFallback
                                 class="bg-primary text-black text-sm font-medium"
                             >
