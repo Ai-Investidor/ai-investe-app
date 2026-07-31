@@ -280,7 +280,7 @@ function backToSidebar() {
                                 <button
                                     type="button"
                                     aria-label="Mais opções"
-                                    class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto focus-visible:opacity-100 focus-visible:pointer-events-auto data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
+                                    class="shrink-0 flex items-center justify-center size-6 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-has-[:focus-visible]:opacity-100 group-has-[:focus-visible]:pointer-events-auto focus-visible:opacity-100 focus-visible:pointer-events-auto data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto text-white/40 hover:text-white transition-opacity duration-200 hover:cursor-pointer"
                                 >
                                 <MoreVertical
                                     class="size-4"
