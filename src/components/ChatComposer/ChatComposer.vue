@@ -17,6 +17,8 @@ import { A11y, FreeMode } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, nextTick, ref, watch } from "vue";
 import ChatInput from "@/components/ChatInput/ChatInput.vue";
+import AttachDoc from "@/components/icons/AttachDoc.vue";
+import AttachImage from "@/components/icons/AttachImage.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
 import "swiper/css";
 
@@ -205,17 +207,19 @@ watch(
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="start" class="min-w-40">
 					<DropdownMenuItem
-						class="hover:cursor-pointer"
+						class="gap-2 hover:cursor-pointer"
 						:disabled="disabled"
 						@select="openDocPicker"
 					>
+						<AttachDoc class="size-4 shrink-0" aria-hidden="true" />
 						Documento
 					</DropdownMenuItem>
 					<DropdownMenuItem
-						class="hover:cursor-pointer"
+						class="gap-2 hover:cursor-pointer"
 						:disabled="disabled"
 						@select="openImagePicker"
 					>
+						<AttachImage class="size-4 shrink-0" aria-hidden="true" />
 						Imagem
 					</DropdownMenuItem>
 				</DropdownMenuContent>
