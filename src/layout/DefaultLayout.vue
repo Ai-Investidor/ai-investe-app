@@ -5,7 +5,9 @@ import Header from "@layout/Header.vue";
 </script>
 
 <template>
-    <div class="flex h-screen bg-app-bg overflow-hidden">
+    <div
+        class="flex h-screen bg-linear-to-b from-app-bg from-100% to-surface overflow-hidden"
+    >
         <Sidebar />
         <div class="flex flex-1 flex-col min-h-0">
             <Header />

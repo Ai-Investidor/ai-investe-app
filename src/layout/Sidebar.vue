@@ -34,7 +34,7 @@ function showConversations() {
 <template>
     <!-- Desktop rail -->
     <aside
-        class="max-lg:hidden flex w-spacing-nav-offset flex-col items-center gap-8 bg-linear-to-b from-app-bg to-surface pt-3 pb-6 px-3"
+        class="max-lg:hidden flex w-spacing-nav-offset flex-col items-center gap-8 bg-surface pt-3 pb-6 px-3"
     >
         <!-- Logo -->
         <RouterLink
@@ -89,7 +89,7 @@ function showConversations() {
     <Sheet :open="isOpen" @update:open="(value) => !value && close()">
         <SheetContent
             side="left"
-            class="flex flex-col gap-8 bg-gradient-to-b from-surface-2 to-surface border-none pt-3 pb-6 px-3"
+            class="flex flex-col gap-8 bg-surface border-none pt-3 pb-6 px-3"
         >
             <!-- Logo -->
             <RouterLink

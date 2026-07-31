@@ -31,7 +31,7 @@ const { hasActiveConversation } = useChat();
                     <img
                         :src="chatBg"
                         alt=""
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-soft-light rounded-lg"
+                        class="absolute inset-0 w-full h-full object-cover opacity-1 rounded-lg"
                         loading="eager"
                         fetchpriority="high"
                     />
