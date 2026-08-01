@@ -48,10 +48,15 @@ const handleLogout = async () => {
                     :aria-label="isOpen ? 'Fechar menu' : 'Abrir menu'"
                     :aria-expanded="isOpen"
                     aria-controls="chat-sessions-panel"
-                    class="max-lg:hidden flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    :class="[
+                        'max-lg:hidden flex h-8 w-8 items-center justify-start hover:cursor-pointer rounded-lg transition-colors',
+                        isOpen
+                            ? 'text-white/40 hover:text-white'
+                            : 'text-white hover:text-white/40',
+                    ]"
                     @click="togglePanel"
                 >
-                    <MenuFold class="size-6" aria-hidden="true" />
+                    <MenuFold class="w-[13px] h-[11px]" aria-hidden="true" />
                 </button>
 
                 <!-- Mobile/tablet: abre o menu lateral principal -->
@@ -62,7 +67,7 @@ const handleLogout = async () => {
                     class="lg:hidden flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
                     @click="toggleMobileSidebar"
                 >
-                    <MenuFold class="size-6" aria-hidden="true" />
+                    <MenuFold class="w-[13px] h-[11px]" aria-hidden="true" />
                 </button>
 
                 <!-- Breadcrumb -->
