@@ -20,6 +20,7 @@ import ChatInput from "@/components/ChatInput/ChatInput.vue";
 import AttachDoc from "@/components/icons/AttachDoc.vue";
 import AttachImage from "@/components/icons/AttachImage.vue";
 import FilePlus from "@/components/icons/FilePlus.vue";
+import Send from "@/components/icons/Send.vue";
 import "swiper/css";
 
 defineOptions({ inheritAttrs: false });
@@ -229,11 +230,12 @@ watch(
 		<template #end>
 			<InputGroupButton
 				size="sm"
+				aria-label="Enviar mensagem"
 				class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto cursor-pointer"
 				:disabled="!canSubmit"
 				@click="handleSubmit"
 			>
-				?
+				<Send class="size-4" aria-hidden="true" />
 			</InputGroupButton>
 		</template>
 	</ChatInput>
