@@ -3,6 +3,12 @@ import { RouterLink, useRoute } from "vue-router";
 import { Button } from "@components/button";
 import { Separator } from "@components/separator";
 import { Sheet, SheetContent } from "@components/sheet";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@components/tooltip";
 import { useMobileChatSessions } from "@composables/useMobileChatSessions";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 import MenuFold from "@/components/icons/MenuFold.vue";
@@ -50,39 +56,55 @@ function showConversations() {
         </RouterLink>
 
         <!-- Navigation Items -->
-        <nav class="flex flex-col gap-4">
-            <Button
-                v-for="item in sidebarItems"
-                :key="item.id"
-                :as="RouterLink"
-                :to="{ name: item.id }"
-                variant="gradient"
-                size="icon-lg"
-                :aria-label="item.label"
-                :aria-current="isActive(item.id) ? 'page' : undefined"
-                class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
-                :class="isActive(item.id) && 'border-primary shadow-lg'"
-            >
-                <component
-                    :is="item.icon"
-                    class="h-4 w-4"
-                    :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
-                />
-            </Button>
-        </nav>
+        <TooltipProvider :delay-duration="200">
+            <nav class="flex flex-col gap-4">
+                <Tooltip v-for="item in sidebarItems" :key="item.id">
+                    <TooltipTrigger as-child>
+                        <Button
+                            :as="RouterLink"
+                            :to="{ name: item.id }"
+                            variant="gradient"
+                            size="icon-lg"
+                            :aria-label="item.label"
+                            :aria-current="
+                                isActive(item.id) ? 'page' : undefined
+                            "
+                            class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
+                            :class="isActive(item.id) && 'border-primary shadow-lg'"
+                        >
+                            <component
+                                :is="item.icon"
+                                class="h-4 w-4"
+                                :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
+                            />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" :side-offset="12">
+                        {{ item.label }}
+                    </TooltipContent>
+                </Tooltip>
+            </nav>
 
-        <!-- Spacer -->
-        <div class="flex-1" />
+            <!-- Spacer -->
+            <div class="flex-1" />
 
-        <!-- Toggle Menu Button -->
-        <Button
-            variant="gradient"
-            size="icon-lg"
-            aria-label="Alternar menu de navegação"
-            class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
-        >
-            <MenuFold class="h-4 w-4 text-primary" />
-        </Button>
+            <!-- Toggle Menu Button -->
+            <Tooltip>
+                <TooltipTrigger as-child>
+                    <Button
+                        variant="gradient"
+                        size="icon-lg"
+                        aria-label="Alternar menu de navegação"
+                        class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
+                    >
+                        <MenuFold class="h-4 w-4 text-primary" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" :side-offset="12">
+                    Alternar menu de navegação
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     </aside>
 
     <!-- Mobile/tablet drawer -->
