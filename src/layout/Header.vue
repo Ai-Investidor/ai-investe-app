@@ -8,7 +8,6 @@ import Search from "@/components/icons/Search.vue";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@components/dialog";
@@ -134,23 +133,26 @@ const handleLogout = async () => {
                     <button
                         type="button"
                         aria-label="Pesquisar histórico"
-                        class="md:hidden flex h-8 w-8 shrink-0 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
+                        class="md:hidden flex h-8 w-8 shrink-0 items-center justify-center hover:cursor-pointer rounded-lg bg-surface-2 border border-card-border text-muted-foreground hover:text-white transition-colors"
                     >
                         <Search class="size-4" aria-hidden="true" />
                     </button>
                 </DialogTrigger>
-                <DialogContent class="bg-surface border-white/10">
-                    <DialogHeader>
-                        <DialogTitle class="text-white">
-                            Pesquisar histórico
-                        </DialogTitle>
-                    </DialogHeader>
+                <DialogContent
+                    class="bg-surface border-white/10 top-4 translate-y-0"
+                >
+                    <DialogTitle class="sr-only">
+                        Pesquisar histórico
+                    </DialogTitle>
 
-                    <form
-                        class="flex flex-col gap-4"
-                        @submit.prevent="handleMobileSearch"
-                    >
+                    <form @submit.prevent="handleMobileSearch">
                         <InputGroup class="bg-app-bg border-input-border">
+                            <InputGroupAddon>
+                                <Search
+                                    class="size-4 text-muted-foreground"
+                                    aria-hidden="true"
+                                />
+                            </InputGroupAddon>
                             <InputGroupInput
                                 v-model="searchQuery"
                                 type="search"
@@ -158,16 +160,6 @@ const handleLogout = async () => {
                                 class="text-paragraph-3 placeholder:text-muted-foreground"
                                 :disabled="isSearching"
                             />
-                            <InputGroupAddon align="inline-end">
-                                <InputGroupButton
-                                    type="submit"
-                                    size="sm"
-                                    class="bg-btn-light text-black text-paragraph-4 hover:bg-opacity-90 rounded-lg"
-                                    :disabled="isSearching"
-                                >
-                                    Buscar
-                                </InputGroupButton>
-                            </InputGroupAddon>
                         </InputGroup>
                     </form>
                 </DialogContent>
