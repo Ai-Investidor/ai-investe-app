@@ -28,6 +28,14 @@ const sidebarItems = [
 
 const isActive = (id) => route.name === id;
 
+/**
+ * O tooltip do kit vem claro (bg-foreground/text-background). Aqui ele segue os
+ * tons escuros do projeto, como na base anterior — a seta inclusa, que herda
+ * fill-foreground e ficaria branca.
+ */
+const TOOLTIP_CLASS =
+    "bg-surface-2 text-white border border-card-border [&_svg]:bg-surface-2 [&_svg]:fill-surface-2";
+
 const { isOpen, close } = useMobileSidebar();
 const { open: openMobileChatSessions } = useMobileChatSessions();
 
@@ -79,7 +87,7 @@ function showConversations() {
                             />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="right" :side-offset="12">
+                    <TooltipContent side="right" :side-offset="12" :class="TOOLTIP_CLASS">
                         {{ item.label }}
                     </TooltipContent>
                 </Tooltip>
@@ -100,7 +108,7 @@ function showConversations() {
                         <MenuFold class="h-4 w-4 text-primary" />
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right" :side-offset="12">
+                <TooltipContent side="right" :side-offset="12" :class="TOOLTIP_CLASS">
                     Alternar menu de navegação
                 </TooltipContent>
             </Tooltip>
