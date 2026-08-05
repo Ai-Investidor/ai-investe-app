@@ -65,7 +65,7 @@ const handleLogout = async () => {
                     type="button"
                     aria-label="Abrir menu de navegação"
                     aria-controls="mobile-sidebar-panel"
-                    class="lg:hidden flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    class="lg:hidden flex h-8 w-8 shrink-0 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
                     @click="toggleMobileSidebar"
                 >
                     <Hamburger class="size-[22px]" aria-hidden="true" />
@@ -76,7 +76,7 @@ const handleLogout = async () => {
                     <button
                         type="button"
                         aria-label="Ir para Home"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
                     >
                         <Home class="h-4 w-4" aria-hidden="true" />
                     </button>

@@ -30,12 +30,12 @@ defineEmits(["profile", "logout"]);
                 aria-label="Abrir menu do perfil"
                 :class="
                     cn(
-                        'flex items-center justify-end hover:cursor-pointer w-[183px] gap-[17px] py-[10px] shrink-0',
+                        'flex items-center justify-end hover:cursor-pointer w-[183px] gap-[17px] py-[10px] shrink-0 max-md:w-auto max-md:gap-0',
                         props.class,
                     )
                 "
             >
-                <div class="flex flex-col items-end">
+                <div class="flex flex-col items-end max-md:hidden">
                     <p class="text-paragraph-7 text-white leading-tight">
                         {{ name }}
                     </p>
