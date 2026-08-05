@@ -139,7 +139,7 @@ const handleLogout = async () => {
                     </button>
                 </DialogTrigger>
                 <DialogContent
-                    class="bg-surface border-white/10 top-4 translate-y-0"
+                    class="bg-surface border-white/10 top-4 translate-y-0 pr-12 [&_[data-slot=dialog-close]]:top-1/2 [&_[data-slot=dialog-close]]:-translate-y-1/2"
                 >
                     <DialogTitle class="sr-only">
                         Pesquisar histórico
