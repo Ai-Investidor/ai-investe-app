@@ -4,6 +4,14 @@ import { useRouter } from "vue-router";
 import Hamburger from "@/components/icons/Hamburger.vue";
 import Home from "@/components/icons/Home.vue";
 import MenuFold from "@/components/icons/MenuFold.vue";
+import Search from "@/components/icons/Search.vue";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@components/dialog";
 import {
     InputGroup,
     InputGroupAddon,
@@ -26,9 +34,17 @@ const { signOut, isAuthenticated, userAvatarUrl, userDisplayName, userInitial } 
 
 const searchQuery = ref("");
 
+/** Busca no mobile: o input nao cabe no header, entao vive num dialog. */
+const isMobileSearchOpen = ref(false);
+
 async function handleSearch() {
     if (!isOpen.value) togglePanel();
     await searchSessions(searchQuery.value);
+}
+
+async function handleMobileSearch() {
+    await handleSearch();
+    isMobileSearchOpen.value = false;
 }
 
 const handleLogout = async () => {
@@ -111,6 +127,51 @@ const handleLogout = async () => {
                     </InputGroupButton>
                 </InputGroupAddon>
             </InputGroup>
+
+            <!-- Mobile/tablet: busca vive num dialog, o input nao cabe no header -->
+            <Dialog v-model:open="isMobileSearchOpen">
+                <DialogTrigger as-child>
+                    <button
+                        type="button"
+                        aria-label="Pesquisar histórico"
+                        class="md:hidden flex h-8 w-8 shrink-0 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
+                    >
+                        <Search class="size-4" aria-hidden="true" />
+                    </button>
+                </DialogTrigger>
+                <DialogContent class="bg-surface border-white/10">
+                    <DialogHeader>
+                        <DialogTitle class="text-white">
+                            Pesquisar histórico
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <form
+                        class="flex flex-col gap-4"
+                        @submit.prevent="handleMobileSearch"
+                    >
+                        <InputGroup class="bg-app-bg border-input-border">
+                            <InputGroupInput
+                                v-model="searchQuery"
+                                type="search"
+                                placeholder="Pesquisar histórico"
+                                class="text-paragraph-3 placeholder:text-muted-foreground"
+                                :disabled="isSearching"
+                            />
+                            <InputGroupAddon align="inline-end">
+                                <InputGroupButton
+                                    type="submit"
+                                    size="sm"
+                                    class="bg-btn-light text-black text-paragraph-4 hover:bg-opacity-90 rounded-lg"
+                                    :disabled="isSearching"
+                                >
+                                    Buscar
+                                </InputGroupButton>
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
             <!-- Profile Section -->
             <UserProfile
