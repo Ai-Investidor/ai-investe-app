@@ -127,8 +127,10 @@ const handleLogout = async () => {
                 </InputGroupAddon>
             </InputGroup>
 
-            <!-- Mobile/tablet: busca vive num dialog, o input nao cabe no header -->
-            <Dialog v-model:open="isMobileSearchOpen">
+            <!-- Bloco da direita: lupa e perfil andam juntos, colados na borda -->
+            <div class="flex items-center gap-4 shrink-0">
+                <!-- Mobile/tablet: busca vive num dialog, o input nao cabe no header -->
+                <Dialog v-model:open="isMobileSearchOpen">
                 <DialogTrigger as-child>
                     <button
                         type="button"
@@ -163,16 +165,17 @@ const handleLogout = async () => {
                         </InputGroup>
                     </form>
                 </DialogContent>
-            </Dialog>
+                </Dialog>
 
-            <!-- Profile Section -->
-            <UserProfile
-                :name="userDisplayName"
-                plan="Plano X"
-                :initial="userInitial"
-                :avatar-url="userAvatarUrl"
-                @logout="handleLogout"
-            />
+                <!-- Profile Section -->
+                <UserProfile
+                    :name="userDisplayName"
+                    plan="Plano X"
+                    :initial="userInitial"
+                    :avatar-url="userAvatarUrl"
+                    @logout="handleLogout"
+                />
+            </div>
         </div>
     </header>
 </template>
