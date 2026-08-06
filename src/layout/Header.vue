@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import Hamburger from "@/components/icons/Hamburger.vue";
 import Home from "@/components/icons/Home.vue";
 import MenuFold from "@/components/icons/MenuFold.vue";
 import {
@@ -67,7 +68,7 @@ const handleLogout = async () => {
                     class="lg:hidden flex h-8 w-8 items-center justify-center hover:cursor-pointer rounded-lg text-muted-foreground hover:text-white transition-colors"
                     @click="toggleMobileSidebar"
                 >
-                    <MenuFold class="w-[13px] h-[11px]" aria-hidden="true" />
+                    <Hamburger class="size-[22px]" aria-hidden="true" />
                 </button>
 
                 <!-- Breadcrumb -->
