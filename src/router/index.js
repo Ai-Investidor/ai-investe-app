@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import DefaultLayout from "@layout/DefaultLayout.vue";
 import { useAuth } from "@composables/useAuth.js";
 
-const APP_NAME = "AIInveste";
+const APP_NAME = "AI Invest";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

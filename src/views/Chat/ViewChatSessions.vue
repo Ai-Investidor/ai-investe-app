@@ -11,6 +11,7 @@ import {
 import { Button } from "@components/button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogFooter,
     DialogHeader,
@@ -36,10 +37,11 @@ import { cn } from "@lib/utils";
 import { computed, ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
-import DrawingPin from "@/components/icons/DrawingPin.vue";
+import Close from "@/components/icons/Close.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
 import Pencil from "@/components/icons/Pencil.vue";
 import Pin from "@/components/icons/Pin.vue";
+import PinFilled from "@/components/icons/PinFilled.vue";
 import Trash from "@/components/icons/Trash.vue";
 import Plus from "@/components/icons/Plus.vue";
 
@@ -181,8 +183,8 @@ function backToSidebar() {
             cn(
                 'flex flex-col h-full shrink-0 overflow-hidden',
                 !prefersReducedMotion &&
-                    'transition-[width] duration-300 ease-in-out',
-                isOpen ? 'w-[195px]' : 'w-0',
+                    'transition-[width,padding] duration-300 ease-in-out',
+                isOpen ? 'w-[195px] pl-3' : 'w-0',
                 props.class,
             )
         "
@@ -253,7 +255,7 @@ function backToSidebar() {
                             @click="selectSession(session.id)"
                         >
                             <component
-                                :is="session.pinned ? DrawingPin : ChatCircleDots"
+                                :is="session.pinned ? PinFilled : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',
@@ -296,7 +298,11 @@ function backToSidebar() {
                                 class="hover:cursor-pointer"
                                 @click="togglePinSession(session.id)"
                             >
-                                <Pin class="size-4 shrink-0" aria-hidden="true" />
+                                <component
+                                    :is="session.pinned ? PinFilled : Pin"
+                                    class="size-4 shrink-0"
+                                    aria-hidden="true"
+                                />
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -436,7 +442,7 @@ function backToSidebar() {
                             @click="selectSessionMobile(session.id)"
                         >
                             <component
-                                :is="session.pinned ? DrawingPin : ChatCircleDots"
+                                :is="session.pinned ? PinFilled : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',
@@ -479,7 +485,11 @@ function backToSidebar() {
                                     class="hover:cursor-pointer"
                                     @click="togglePinSession(session.id)"
                                 >
-                                    <Pin class="size-4 shrink-0" aria-hidden="true" />
+                                    <component
+                                    :is="session.pinned ? PinFilled : Pin"
+                                    class="size-4 shrink-0"
+                                    aria-hidden="true"
+                                />
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -542,7 +552,17 @@ function backToSidebar() {
     </Sheet>
 
     <Dialog :open="isEditDialogOpen" @update:open="handleEditDialogOpenChange">
-        <DialogContent class="bg-surface border-white/10">
+        <DialogContent
+            class="bg-surface border-white/10"
+            :show-close-button="false"
+        >
+            <DialogClose
+                aria-label="Fechar"
+                class="absolute top-4 right-4 rounded-xs opacity-70 hover:opacity-100 hover:cursor-pointer transition-opacity"
+            >
+                <Close class="size-4" aria-hidden="true" />
+            </DialogClose>
+
             <DialogHeader>
                 <DialogTitle class="text-white">
                     Editar título da sessão
@@ -576,7 +596,6 @@ function backToSidebar() {
                     </Button>
                     <Button
                         type="submit"
-                        variant="gradient"
                         :disabled="!canSaveEditTitle || isUpdatingSessionTitle"
                     >
                         {{
@@ -593,6 +612,14 @@ function backToSidebar() {
         @update:open="handleDeleteDialogOpenChange"
     >
         <AlertDialogContent class="bg-surface border-white/10">
+            <AlertDialogCancel
+                aria-label="Fechar"
+                :disabled="isDeletingSession"
+                class="absolute top-4 right-4 mt-0 h-auto w-auto border-0 bg-transparent p-0 shadow-none opacity-70 hover:bg-transparent hover:text-white hover:opacity-100 hover:cursor-pointer transition-opacity"
+            >
+                <Close class="size-4" aria-hidden="true" />
+            </AlertDialogCancel>
+
             <AlertDialogHeader>
                 <AlertDialogTitle class="text-white">
                     Excluir sessão?
