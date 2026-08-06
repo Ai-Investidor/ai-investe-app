@@ -38,6 +38,9 @@ import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
+import Pencil from "@/components/icons/Pencil.vue";
+import Pin from "@/components/icons/Pin.vue";
+import Trash from "@/components/icons/Trash.vue";
 import Plus from "@/components/icons/Plus.vue";
 
 defineOptions({ inheritAttrs: false });
@@ -293,6 +296,7 @@ function backToSidebar() {
                                 class="hover:cursor-pointer"
                                 @click="togglePinSession(session.id)"
                             >
+                                <Pin class="size-4 shrink-0" aria-hidden="true" />
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -300,6 +304,7 @@ function backToSidebar() {
                                 class="hover:cursor-pointer"
                                 @click="requestEditSession(session)"
                             >
+                                <Pencil class="size-4 shrink-0" aria-hidden="true" />
                                 Editar
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -308,6 +313,7 @@ function backToSidebar() {
                                 class="hover:cursor-pointer"
                                 @click="requestDeleteSession(session)"
                             >
+                                <Trash class="size-4 shrink-0" aria-hidden="true" />
                                 Deletar
                             </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -473,13 +479,15 @@ function backToSidebar() {
                                     class="hover:cursor-pointer"
                                     @click="togglePinSession(session.id)"
                                 >
-                                    {{ session.pinned ? "Desafixar" : "Fixar" }}
+                                    <Pin class="size-4 shrink-0" aria-hidden="true" />
+                                {{ session.pinned ? "Desafixar" : "Fixar" }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     class="hover:cursor-pointer"
                                     @click="requestEditSession(session)"
                                 >
+                                    <Pencil class="size-4 shrink-0" aria-hidden="true" />
                                     Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -488,6 +496,7 @@ function backToSidebar() {
                                     class="hover:cursor-pointer"
                                     @click="requestDeleteSession(session)"
                                 >
+                                    <Trash class="size-4 shrink-0" aria-hidden="true" />
                                     Deletar
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
