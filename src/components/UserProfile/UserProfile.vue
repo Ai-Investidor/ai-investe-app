@@ -8,6 +8,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@components/dropdown-menu";
+import Exit from "@/components/icons/Exit.vue";
+import Person from "@/components/icons/Person.vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -64,6 +66,7 @@ defineEmits(["profile", "logout"]);
                 @click="$emit('profile')"
                 class="hover:cursor-pointer"
             >
+                <Person class="size-4 shrink-0" aria-hidden="true" />
                 Perfil
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -72,6 +75,7 @@ defineEmits(["profile", "logout"]);
                 @click="$emit('logout')"
                 class="hover:cursor-pointer"
             >
+                <Exit class="size-4 shrink-0" aria-hidden="true" />
                 Sair
             </DropdownMenuItem>
         </DropdownMenuContent>

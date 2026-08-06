@@ -231,7 +231,7 @@ watch(
 			<InputGroupButton
 				size="sm"
 				aria-label="Enviar mensagem"
-				class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto cursor-pointer"
+				class="bg-btn-light hover:bg-white hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto cursor-pointer transition-colors"
 				:disabled="!canSubmit"
 				@click="handleSubmit"
 			>
