@@ -9,6 +9,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@components/tooltip";
+import { useChat } from "@composables/useChat";
 import { useMobileChatSessions } from "@composables/useMobileChatSessions";
 import { useMobileSidebar } from "@composables/useMobileSidebar";
 import MenuFold from "@/components/icons/MenuFold.vue";
@@ -38,6 +39,7 @@ const TOOLTIP_CLASS =
 
 const { isOpen, close } = useMobileSidebar();
 const { open: openMobileChatSessions } = useMobileChatSessions();
+const { resetActiveSession } = useChat();
 
 function showConversations() {
     close();
@@ -54,6 +56,7 @@ function showConversations() {
         <RouterLink
             to="/"
             class="transition-opacity duration-200 hover:opacity-80"
+            @click="resetActiveSession"
         >
             <img
                 :src="logo"
@@ -125,7 +128,12 @@ function showConversations() {
             <RouterLink
                 to="/"
                 class="transition-opacity duration-200 hover:opacity-80"
-                @click="close"
+                @click="
+                    () => {
+                        resetActiveSession();
+                        close();
+                    }
+                "
             >
                 <img
                     :src="logo"
