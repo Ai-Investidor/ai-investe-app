@@ -11,6 +11,7 @@ import {
 import { Button } from "@components/button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogFooter,
     DialogHeader,
@@ -36,6 +37,7 @@ import { cn } from "@lib/utils";
 import { computed, ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
+import Close from "@/components/icons/Close.vue";
 import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
 import Pencil from "@/components/icons/Pencil.vue";
@@ -542,7 +544,17 @@ function backToSidebar() {
     </Sheet>
 
     <Dialog :open="isEditDialogOpen" @update:open="handleEditDialogOpenChange">
-        <DialogContent class="bg-surface border-white/10">
+        <DialogContent
+            class="bg-surface border-white/10"
+            :show-close-button="false"
+        >
+            <DialogClose
+                aria-label="Fechar"
+                class="absolute top-4 right-4 rounded-xs opacity-70 hover:opacity-100 hover:cursor-pointer transition-opacity"
+            >
+                <Close class="size-4" aria-hidden="true" />
+            </DialogClose>
+
             <DialogHeader>
                 <DialogTitle class="text-white">
                     Editar título da sessão
@@ -592,6 +604,14 @@ function backToSidebar() {
         @update:open="handleDeleteDialogOpenChange"
     >
         <AlertDialogContent class="bg-surface border-white/10">
+            <AlertDialogCancel
+                aria-label="Fechar"
+                :disabled="isDeletingSession"
+                class="absolute top-4 right-4 mt-0 h-auto w-auto border-0 bg-transparent p-0 shadow-none opacity-70 hover:bg-transparent hover:opacity-100 hover:cursor-pointer transition-opacity"
+            >
+                <Close class="size-4" aria-hidden="true" />
+            </AlertDialogCancel>
+
             <AlertDialogHeader>
                 <AlertDialogTitle class="text-white">
                     Excluir sessão?
