@@ -23,7 +23,7 @@ const route = useRoute();
 
 const sidebarItems = [
     { id: "chat", icon: ChatCircleDots, label: "Chat" },
-    { id: "alerts", icon: Alerta, label: "Notificações" },
+    { id: "alerts", icon: Alerta, label: "Notificações", badge: true },
     { id: "cards", icon: CardStackMinus, label: "Carteiras" },
 ];
 
@@ -83,11 +83,18 @@ function showConversations() {
                             class="rounded-lg bg-gradient-to-br from-surface to-surface-2"
                             :class="isActive(item.id) && 'border-primary shadow-lg'"
                         >
-                            <component
-                                :is="item.icon"
-                                class="h-4 w-4"
-                                :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
-                            />
+                            <span class="relative flex">
+                                <component
+                                    :is="item.icon"
+                                    class="h-4 w-4"
+                                    :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
+                                />
+                                <span
+                                    v-if="item.badge"
+                                    class="absolute -top-1 -right-1 size-2 rounded-full bg-primary"
+                                    aria-hidden="true"
+                                />
+                            </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent side="right" :side-offset="12" :class="TOOLTIP_CLASS">
@@ -156,11 +163,18 @@ function showConversations() {
                     :class="isActive(item.id) && 'border-primary shadow-lg'"
                     @click="close"
                 >
-                    <component
-                        :is="item.icon"
-                        class="h-4 w-4 shrink-0"
-                        :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
-                    />
+                    <span class="relative flex shrink-0">
+                        <component
+                            :is="item.icon"
+                            class="h-4 w-4 shrink-0"
+                            :class="isActive(item.id) ? 'text-primary' : 'text-muted-foreground'"
+                        />
+                        <span
+                            v-if="item.badge"
+                            class="absolute -top-1 -right-1 size-2 rounded-full bg-primary"
+                            aria-hidden="true"
+                        />
+                    </span>
                     <span
                         class="text-paragraph-9"
                         :class="isActive(item.id) ? 'text-white' : 'text-muted-foreground'"
