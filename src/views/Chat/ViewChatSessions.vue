@@ -576,7 +576,6 @@ function backToSidebar() {
                     </Button>
                     <Button
                         type="submit"
-                        variant="gradient"
                         :disabled="!canSaveEditTitle || isUpdatingSessionTitle"
                     >
                         {{
