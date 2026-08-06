@@ -23,25 +23,26 @@ const suggestions = [
 		id: 1,
 		icon: ChatCircleDots,
 		title: "Análise Fundamentalista",
-		description: "faça análise fundamentalista da apple baseada em noticias",
+		description: "Faça análise fundamentalista da Apple baseada em notícias",
 	},
 	{
 		id: 2,
 		icon: MaskOn,
-		title: "Análise Fundamentalista",
-		description: "faça análise fundamentalista da apple baseada em noticias",
+		title: "Comparação de ETFs",
+		description:
+			"Compare o desempenho de ETFs de tecnologia nos últimos 5 anos",
 	},
 	{
 		id: 3,
 		icon: Loop,
-		title: "Análise Fundamentalista",
-		description: "faça análise fundamentalista da apple baseada em noticias",
+		title: "Diversificação de Portfólio",
+		description: "Como posso diversificar um portfólio de R$ 100.000?",
 	},
 	{
 		id: 4,
 		icon: FontStyle,
-		title: "Análise Fundamentalista",
-		description: "faça análise fundamentalista da apple baseada em noticias",
+		title: "Análise de Dividend Yield",
+		description: "Melhores ações com dividend yield acima de 6%",
 	},
 ];
 </script>

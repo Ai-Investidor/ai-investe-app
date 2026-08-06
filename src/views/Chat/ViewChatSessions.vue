@@ -183,8 +183,8 @@ function backToSidebar() {
             cn(
                 'flex flex-col h-full shrink-0 overflow-hidden',
                 !prefersReducedMotion &&
-                    'transition-[width] duration-300 ease-in-out',
-                isOpen ? 'w-[195px]' : 'w-0',
+                    'transition-[width,padding] duration-300 ease-in-out',
+                isOpen ? 'w-[195px] pl-3' : 'w-0',
                 props.class,
             )
         "
