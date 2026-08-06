@@ -25,7 +25,7 @@ import { useMobileSidebar } from "@composables/useMobileSidebar";
 
 const { isOpen, togglePanel } = useChatSessionsPanel();
 const { toggle: toggleMobileSidebar } = useMobileSidebar();
-const { searchSessions, isSearching } = useChat();
+const { searchSessions, isSearching, resetActiveSession } = useChat();
 
 const router = useRouter();
 const { signOut, isAuthenticated, userAvatarUrl, userDisplayName, userInitial } =
@@ -44,6 +44,14 @@ async function handleSearch() {
 async function handleMobileSearch() {
     await handleSearch();
     isMobileSearchOpen.value = false;
+}
+
+/** Volta pra home do chat: rota do chat + conversa ativa zerada. */
+function goToChatHome() {
+    resetActiveSession();
+    if (router.currentRoute.value.name !== "chat") {
+        router.push({ name: "chat" });
+    }
 }
 
 const handleLogout = async () => {
@@ -90,8 +98,9 @@ const handleLogout = async () => {
                 <nav class="flex items-center gap-2 shrink-0">
                     <button
                         type="button"
-                        aria-label="Ir para Home"
-                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
+                        aria-label="Ir para a home do chat"
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:cursor-pointer text-muted-foreground hover:text-white transition-colors"
+                        @click="goToChatHome"
                     >
                         <Home class="h-4 w-4" aria-hidden="true" />
                     </button>
