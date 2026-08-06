@@ -38,10 +38,10 @@ import { computed, ref } from "vue";
 import ArrowLeft from "@/components/icons/ArrowLeft.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import Close from "@/components/icons/Close.vue";
-import DrawingPin from "@/components/icons/DrawingPin.vue";
 import MoreVertical from "@/components/icons/MoreVertical.vue";
 import Pencil from "@/components/icons/Pencil.vue";
 import Pin from "@/components/icons/Pin.vue";
+import PinFilled from "@/components/icons/PinFilled.vue";
 import Trash from "@/components/icons/Trash.vue";
 import Plus from "@/components/icons/Plus.vue";
 
@@ -255,7 +255,7 @@ function backToSidebar() {
                             @click="selectSession(session.id)"
                         >
                             <component
-                                :is="session.pinned ? DrawingPin : ChatCircleDots"
+                                :is="session.pinned ? PinFilled : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',
@@ -298,7 +298,11 @@ function backToSidebar() {
                                 class="hover:cursor-pointer"
                                 @click="togglePinSession(session.id)"
                             >
-                                <Pin class="size-4 shrink-0" aria-hidden="true" />
+                                <component
+                                    :is="session.pinned ? PinFilled : Pin"
+                                    class="size-4 shrink-0"
+                                    aria-hidden="true"
+                                />
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -438,7 +442,7 @@ function backToSidebar() {
                             @click="selectSessionMobile(session.id)"
                         >
                             <component
-                                :is="session.pinned ? DrawingPin : ChatCircleDots"
+                                :is="session.pinned ? PinFilled : ChatCircleDots"
                                 :class="
                                     cn(
                                         'size-4 shrink-0 transition-colors duration-200',
@@ -481,7 +485,11 @@ function backToSidebar() {
                                     class="hover:cursor-pointer"
                                     @click="togglePinSession(session.id)"
                                 >
-                                    <Pin class="size-4 shrink-0" aria-hidden="true" />
+                                    <component
+                                    :is="session.pinned ? PinFilled : Pin"
+                                    class="size-4 shrink-0"
+                                    aria-hidden="true"
+                                />
                                 {{ session.pinned ? "Desafixar" : "Fixar" }}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -607,7 +615,7 @@ function backToSidebar() {
             <AlertDialogCancel
                 aria-label="Fechar"
                 :disabled="isDeletingSession"
-                class="absolute top-4 right-4 mt-0 h-auto w-auto border-0 bg-transparent p-0 shadow-none opacity-70 hover:bg-transparent hover:opacity-100 hover:cursor-pointer transition-opacity"
+                class="absolute top-4 right-4 mt-0 h-auto w-auto border-0 bg-transparent p-0 shadow-none opacity-70 hover:bg-transparent hover:text-white hover:opacity-100 hover:cursor-pointer transition-opacity"
             >
                 <Close class="size-4" aria-hidden="true" />
             </AlertDialogCancel>
