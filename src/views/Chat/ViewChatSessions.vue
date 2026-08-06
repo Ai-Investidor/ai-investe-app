@@ -357,7 +357,7 @@ function backToSidebar() {
         <SheetContent
             side="left"
             aria-label="Histórico de conversas"
-            class="flex flex-col gap-4 bg-gradient-to-b from-surface-2 to-surface border-none pt-12 pb-6 px-3"
+            class="flex flex-col gap-4 bg-linear-to-b from-app-bg from-100% to-surface border-none pt-12 pb-6 px-3"
         >
             <!-- Voltar pro menu de navegação -->
             <button

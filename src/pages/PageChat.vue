@@ -11,7 +11,7 @@ const { hasActiveConversation } = useChat();
 <template>
     <div class="flex-1 page-container min-w-0">
         <div
-            class="p-3 max-md:p-2 size-full flex flex-row items-stretch gap-3 min-w-0 overflow-hidden"
+            class="p-3 pl-0 max-md:p-2 size-full flex flex-row items-stretch gap-3 min-w-0 overflow-hidden"
         >
             <ViewChatSessions class="max-lg:hidden" />
 
@@ -31,7 +31,7 @@ const { hasActiveConversation } = useChat();
                     <img
                         :src="chatBg"
                         alt=""
-                        class="absolute inset-0 w-full h-full object-cover mix-blend-soft-light rounded-lg"
+                        class="absolute inset-0 w-full h-full object-cover opacity-1 rounded-lg"
                         loading="eager"
                         fetchpriority="high"
                     />

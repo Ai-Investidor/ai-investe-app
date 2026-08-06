@@ -39,7 +39,7 @@ const handleLogout = async () => {
 </script>
 
 <template>
-    <header class="h-[60px] bg-linear-135 from-app-bg to-surface px-3 py-0">
+    <header class="h-[60px] px-3 py-0">
         <div class="flex h-full items-center justify-between gap-6 max-lg:gap-3">
             <div class="flex items-center gap-x-10 max-lg:gap-x-3">
                 <!-- Desktop: toggle do painel de sessões do chat -->
