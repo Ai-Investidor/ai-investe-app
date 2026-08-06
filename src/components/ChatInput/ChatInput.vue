@@ -8,13 +8,14 @@ import {
     InputGroup,
     InputGroupAddon,
 } from "@components/input-group";
+import { CHAT_PLACEHOLDER } from "@constants/CHAT";
 import { cn } from "@/lib/utils";
 
 defineOptions({ inheritAttrs: false });
 
 const props = defineProps({
     modelValue: { type: String, default: "" },
-    placeholder: { type: String, default: "Fale com nossa IA..." },
+    placeholder: { type: String, default: CHAT_PLACEHOLDER },
     disabled: { type: Boolean, default: false },
     class: {
         type: [Boolean, null, String, Object, Array],

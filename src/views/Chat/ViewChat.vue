@@ -1,20 +1,20 @@
 <script setup>
-import { ref } from "vue";
-import { InputGroupButton } from "@components/input-group";
 import { useChat } from "@composables/useChat";
+import { CHAT_COLUMN_CLASS } from "@constants/CHAT";
+import { ref } from "vue";
+import ChatComposer from "@/components/ChatComposer/ChatComposer.vue";
 import ChatCircleDots from "@/components/icons/ChatCircleDots.vue";
 import FontStyle from "@/components/icons/FontStyle.vue";
 import Loop from "@/components/icons/Loop.vue";
 import MaskOn from "@/components/icons/MaskOn.vue";
-import ChatInput from "@/components/ChatInput/ChatInput.vue";
 import SuggestionCard from "@/components/SuggestionCard/SuggestionCard.vue";
 
 const { sendMessage, isSending } = useChat();
 
 const inputText = ref("");
 
-function handleSubmit() {
-	sendMessage(inputText.value);
+function handleSubmit(files) {
+	sendMessage(inputText.value, files);
 	inputText.value = "";
 }
 
@@ -75,28 +75,11 @@ const suggestions = [
     </div>
 
     <!-- Input with button -->
-    <ChatInput
+    <ChatComposer
       v-model="inputText"
-      placeholder="Fale com nossa IA..."
       :disabled="isSending"
-      class="w-[clamp(541px,65%,720px)] max-md:w-full"
+      :class="CHAT_COLUMN_CLASS"
       @submit="handleSubmit"
-    >
-      <template #end>
-        <InputGroupButton
-          size="sm"
-          class="bg-btn-light hover:bg-btn-light/90 hover:text-black text-black rounded-lg px-3 py-1.5 text-paragraph-4 h-auto"
-          :disabled="isSending"
-          @click="handleSubmit"
-        >
-          ?
-        </InputGroupButton>
-      </template>
-    </ChatInput>
-
-    <!-- Disclaimer -->
-    <p class="text-paragraph-1 text-white/25 text-center text-nowrap tracking-ui">
-      AI invest é uma IA e pode cometer erros pode cometer erros.
-    </p>
+    />
   </section>
 </template>
