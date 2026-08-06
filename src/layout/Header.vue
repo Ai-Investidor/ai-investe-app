@@ -4,6 +4,13 @@ import { useRouter } from "vue-router";
 import Hamburger from "@/components/icons/Hamburger.vue";
 import Home from "@/components/icons/Home.vue";
 import MenuFold from "@/components/icons/MenuFold.vue";
+import Search from "@/components/icons/Search.vue";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from "@components/dialog";
 import {
     InputGroup,
     InputGroupAddon,
@@ -18,7 +25,7 @@ import { useMobileSidebar } from "@composables/useMobileSidebar";
 
 const { isOpen, togglePanel } = useChatSessionsPanel();
 const { toggle: toggleMobileSidebar } = useMobileSidebar();
-const { searchSessions, isSearching } = useChat();
+const { searchSessions, isSearching, resetActiveSession } = useChat();
 
 const router = useRouter();
 const { signOut, isAuthenticated, userAvatarUrl, userDisplayName, userInitial } =
@@ -26,9 +33,25 @@ const { signOut, isAuthenticated, userAvatarUrl, userDisplayName, userInitial } 
 
 const searchQuery = ref("");
 
+/** Busca no mobile: o input nao cabe no header, entao vive num dialog. */
+const isMobileSearchOpen = ref(false);
+
 async function handleSearch() {
     if (!isOpen.value) togglePanel();
     await searchSessions(searchQuery.value);
+}
+
+async function handleMobileSearch() {
+    await handleSearch();
+    isMobileSearchOpen.value = false;
+}
+
+/** Volta pra home do chat: rota do chat + conversa ativa zerada. */
+function goToChatHome() {
+    resetActiveSession();
+    if (router.currentRoute.value.name !== "chat") {
+        router.push({ name: "chat" });
+    }
 }
 
 const handleLogout = async () => {
@@ -75,8 +98,9 @@ const handleLogout = async () => {
                 <nav class="flex items-center gap-2 shrink-0">
                     <button
                         type="button"
-                        aria-label="Ir para Home"
-                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-white transition-colors"
+                        aria-label="Ir para a home do chat"
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:cursor-pointer text-muted-foreground hover:text-white transition-colors"
+                        @click="goToChatHome"
                     >
                         <Home class="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -112,14 +136,55 @@ const handleLogout = async () => {
                 </InputGroupAddon>
             </InputGroup>
 
-            <!-- Profile Section -->
-            <UserProfile
-                :name="userDisplayName"
-                plan="Plano X"
-                :initial="userInitial"
-                :avatar-url="userAvatarUrl"
-                @logout="handleLogout"
-            />
+            <!-- Bloco da direita: lupa e perfil andam juntos, colados na borda -->
+            <div class="flex items-center gap-4 shrink-0">
+                <!-- Mobile/tablet: busca vive num dialog, o input nao cabe no header -->
+                <Dialog v-model:open="isMobileSearchOpen">
+                <DialogTrigger as-child>
+                    <button
+                        type="button"
+                        aria-label="Pesquisar histórico"
+                        class="md:hidden flex h-8 w-8 shrink-0 items-center justify-center hover:cursor-pointer rounded-lg bg-surface-2 border border-card-border text-muted-foreground hover:text-white transition-colors"
+                    >
+                        <Search class="size-4" aria-hidden="true" />
+                    </button>
+                </DialogTrigger>
+                <DialogContent
+                    class="bg-surface border-white/10 top-4 translate-y-0 pr-12 [&_[data-slot=dialog-close]]:top-1/2 [&_[data-slot=dialog-close]]:-translate-y-1/2"
+                >
+                    <DialogTitle class="sr-only">
+                        Pesquisar histórico
+                    </DialogTitle>
+
+                    <form @submit.prevent="handleMobileSearch">
+                        <InputGroup class="bg-app-bg border-input-border">
+                            <InputGroupAddon>
+                                <Search
+                                    class="size-4 text-muted-foreground"
+                                    aria-hidden="true"
+                                />
+                            </InputGroupAddon>
+                            <InputGroupInput
+                                v-model="searchQuery"
+                                type="search"
+                                placeholder="Pesquisar histórico"
+                                class="text-paragraph-3 placeholder:text-muted-foreground"
+                                :disabled="isSearching"
+                            />
+                        </InputGroup>
+                    </form>
+                </DialogContent>
+                </Dialog>
+
+                <!-- Profile Section -->
+                <UserProfile
+                    :name="userDisplayName"
+                    plan="Plano X"
+                    :initial="userInitial"
+                    :avatar-url="userAvatarUrl"
+                    @logout="handleLogout"
+                />
+            </div>
         </div>
     </header>
 </template>
