@@ -24,6 +24,22 @@ export function authService() {
     return data;
   }
 
+  async function resetPasswordForEmail(email) {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/nova-senha`,
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async function updateUser({ password }) {
+    const { data, error } = await supabase.auth.updateUser({ password });
+
+    if (error) throw error;
+    return data;
+  }
+
   async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -51,6 +67,8 @@ export function authService() {
   return {
     signIn,
     signUp,
+    resetPasswordForEmail,
+    updateUser,
     signInWithGoogle,
     signOut,
     getSession,

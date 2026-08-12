@@ -293,7 +293,7 @@ watch(
                                 'flex min-w-0 flex-col gap-3 max-w-[85%] md:max-w-[70%] border border-card-border bg-gradient-to-r from-black to-surface-2 shadow-[0px_2px_0px_0px_black] rounded-md px-[15px] py-[15px]',
                                 message.role === 'user'
                                     ? 'items-end'
-                                    : 'items-start',
+                                    : 'items-start w-[85%] md:w-[70%]',
                             ]"
                         >
                             <p

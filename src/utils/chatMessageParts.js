@@ -1,8 +1,7 @@
 const TOOL_LABELS = {
-	fetch_recent_news: "Buscando notícias recentes",
-	fetch_fundamentals: "Consultando fundamentos",
 	fetch_price_history: "Consultando histórico de preços",
-	fetch_market_data: "Consultando dados de mercado",
+	render_xy_graphic: "Montando gráfico",
+	render_pizza_graphic: "Montando gráfico",
 };
 
 export function isToolPart(part) {
@@ -80,15 +79,51 @@ export function getMessageSources(message) {
 	return parseLegacyNews(message?.metadata?.news);
 }
 
+export function buildToolStatusItem(part) {
+	return {
+		id: part.toolCallId ?? part.type,
+		name: getToolName(part),
+		label: getToolLabel(part),
+		status: getToolStatus(part),
+	};
+}
+
 export function getMessageTools(message) {
-	return (
-		message?.parts?.filter(isToolPart).map((part) => ({
-			id: part.toolCallId ?? part.type,
-			name: getToolName(part),
-			label: getToolLabel(part),
-			status: getToolStatus(part),
-		})) ?? []
-	);
+	return message?.parts?.filter(isToolPart).map(buildToolStatusItem) ?? [];
+}
+
+export function isLastTextPart(parts, index) {
+	if (!parts?.length || parts[index]?.type !== "text") return false;
+
+	for (let i = parts.length - 1; i >= 0; i--) {
+		if (parts[i].type === "text") return i === index;
+	}
+
+	return false;
+}
+
+export function parseToolOutput(output) {
+	if (output == null) return null;
+
+	if (typeof output === "string") {
+		const trimmed = output.trim();
+		if (!trimmed) return null;
+
+		try {
+			return JSON.parse(trimmed);
+		} catch {
+			return output;
+		}
+	}
+
+	return output;
+}
+
+export function hasToolOutput(part) {
+	if (part?.state !== "output-available") return false;
+
+	const parsed = parseToolOutput(part.output);
+	return parsed != null && parsed !== "";
 }
 
 export function hasAssistantVisibleContent(message) {
