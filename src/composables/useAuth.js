@@ -14,6 +14,8 @@ const isSigningIn = ref(false);
 const isSigningUp = ref(false);
 const isSigningOut = ref(false);
 const isLoadingSession = ref(false);
+const isResettingPassword = ref(false);
+const isUpdatingPassword = ref(false);
 
 let initialized = false;
 let readyPromise = null;
@@ -91,6 +93,18 @@ async function signUp({ email, password, fullName, phone }) {
   return data;
 }
 
+async function resetPassword({ email }) {
+  return runAction(() => service.resetPasswordForEmail(email), {
+    loading: isResettingPassword,
+  });
+}
+
+async function updatePassword({ password }) {
+  return runAction(() => service.updateUser({ password }), {
+    loading: isUpdatingPassword,
+  });
+}
+
 async function signInWithGoogle() {
   await runAction(() => service.signInWithGoogle(), { loading: isSigningIn });
 }
@@ -145,10 +159,14 @@ export function useAuth() {
     isSigningUp,
     isSigningOut,
     isLoadingSession,
+    isResettingPassword,
+    isUpdatingPassword,
     ready,
     clearError,
     signIn,
     signUp,
+    resetPassword,
+    updatePassword,
     signInWithGoogle,
     signOut,
   };

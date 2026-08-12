@@ -23,7 +23,7 @@ const props = defineProps({
 	},
 });
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 const userToggled = ref(false);
 
 const isStreaming = computed(() => props.state === "streaming");
@@ -35,15 +35,13 @@ const summaryLabel = computed(() => {
 	return "Pensando...";
 });
 
+// Fechado por padrão — o usuário decide se quer abrir. Só fechamos de volta
+// automaticamente (nunca abrimos sozinhos) quando a resposta final chega,
+// caso o bloco tenha ficado aberto de um estado anterior.
 watch(
 	() => [props.state, props.autoCollapse],
 	([state, autoCollapse]) => {
 		if (userToggled.value) return;
-
-		if (state === "streaming") {
-			isOpen.value = true;
-			return;
-		}
 
 		if (autoCollapse || state === "done") {
 			isOpen.value = false;

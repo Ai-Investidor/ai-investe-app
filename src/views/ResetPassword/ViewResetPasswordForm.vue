@@ -1,21 +1,51 @@
 <script setup>
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { toast } from "vue-sonner";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { z } from "zod";
+
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@components/form";
+import { useAuth } from "@composables/useAuth.js";
+import { passwordSchema } from "@utils/validators.js";
 
 import logoInvestLockup from "@assets/icons/login/logo-invest-lockup.svg";
 
-const password = ref("");
-const confirmPassword = ref("");
+const router = useRouter();
+const { updatePassword, isUpdatingPassword, signOut } = useAuth();
 
-const handleSubmit = () => {
-    console.log("Reset password submitted:", {
-        password: password.value,
-        confirmPassword: confirmPassword.value,
+const resetPasswordSchema = z
+    .object({
+        password: passwordSchema,
+        confirmPassword: z
+            .string({ required_error: "Confirme sua senha" })
+            .min(1, "Confirme sua senha"),
+    })
+    .refine((values) => values.password === values.confirmPassword, {
+        message: "As senhas não coincidem",
+        path: ["confirmPassword"],
     });
-};
+
+const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(resetPasswordSchema),
+});
+
+const onSubmit = handleSubmit(async (values) => {
+    const data = await updatePassword({ password: values.password });
+    if (!data) return;
+
+    await signOut();
+    toast.success("Senha atualizada com sucesso! Faça login com sua nova senha.");
+    router.push({ name: "login" });
+});
 </script>
 
 <template>
@@ -47,40 +77,49 @@ const handleSubmit = () => {
             </div>
 
             <form
-                @submit.prevent="handleSubmit"
+                @submit.prevent="onSubmit"
                 class="flex flex-col gap-section-gap w-full"
             >
-                <div class="space-y-2">
-                    <Label for="password" class="sr-only"> Nova senha </Label>
-                    <Input
-                        id="password"
-                        v-model="password"
-                        type="password"
-                        placeholder="Digite sua nova senha"
-                        autocomplete="new-password"
-                        class="rounded-full h-[42px] px-[13px] border-input-outline"
-                    />
-                </div>
+                <FormField v-slot="{ componentField }" name="password">
+                    <FormItem class="space-y-2">
+                        <FormLabel class="sr-only"> Nova senha </FormLabel>
+                        <FormControl>
+                            <Input
+                                type="password"
+                                placeholder="Digite sua nova senha"
+                                autocomplete="new-password"
+                                class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                v-bind="componentField"
+                            />
+                        </FormControl>
+                        <FormMessage class="text-xs" />
+                    </FormItem>
+                </FormField>
 
-                <div class="space-y-2">
-                    <Label for="confirmPassword" class="sr-only">
-                        Repetir senha
-                    </Label>
-                    <Input
-                        id="confirmPassword"
-                        v-model="confirmPassword"
-                        type="password"
-                        placeholder="Confirme sua nova senha"
-                        autocomplete="new-password"
-                        class="rounded-full h-[42px] px-[13px] border-input-outline"
-                    />
-                </div>
+                <FormField v-slot="{ componentField }" name="confirmPassword">
+                    <FormItem class="space-y-2">
+                        <FormLabel class="sr-only">
+                            Repetir senha
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                                type="password"
+                                placeholder="Confirme sua nova senha"
+                                autocomplete="new-password"
+                                class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                v-bind="componentField"
+                            />
+                        </FormControl>
+                        <FormMessage class="text-xs" />
+                    </FormItem>
+                </FormField>
 
                 <Button
                     type="submit"
+                    :disabled="isUpdatingPassword"
                     class="w-full h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
                 >
-                    Salvar nova senha
+                    {{ isUpdatingPassword ? "Salvando..." : "Salvar nova senha" }}
                 </Button>
 
                 <div class="text-center">

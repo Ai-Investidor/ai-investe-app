@@ -1,19 +1,40 @@
 <script setup>
-import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { toast } from "vue-sonner";
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { z } from "zod";
+
 import { Button } from "@components/button";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@components/form";
+import { useAuth } from "@composables/useAuth.js";
+import { emailSchema } from "@utils/validators.js";
 
 import logoInvestLockup from "@assets/icons/login/logo-invest-lockup.svg";
 
-const email = ref("");
+const { resetPassword, isResettingPassword } = useAuth();
 
-const handleSubmit = () => {
-    console.log("Recover password submitted:", {
-        email: email.value,
-    });
-};
+const recoverSchema = z.object({
+    email: emailSchema,
+});
+
+const { handleSubmit } = useForm({
+    validationSchema: toTypedSchema(recoverSchema),
+});
+
+const onSubmit = handleSubmit(async (values) => {
+    const data = await resetPassword({ email: values.email });
+    if (!data) return;
+
+    toast.success("Link de recuperação enviado! Verifique seu e-mail.");
+});
 </script>
 
 <template>
@@ -46,26 +67,31 @@ const handleSubmit = () => {
             </div>
 
             <form
-                @submit.prevent="handleSubmit"
+                @submit.prevent="onSubmit"
                 class="flex flex-col gap-section-gap w-full"
             >
-                <div class="space-y-2">
-                    <Label for="email" class="sr-only"> E-mail </Label>
-                    <Input
-                        id="email"
-                        v-model="email"
-                        type="email"
-                        placeholder="Digite seu e-mail"
-                        autocomplete="email"
-                        class="rounded-full h-[42px] px-[13px] border-input-outline"
-                    />
-                </div>
+                <FormField v-slot="{ componentField }" name="email">
+                    <FormItem class="space-y-2">
+                        <FormLabel class="sr-only"> E-mail </FormLabel>
+                        <FormControl>
+                            <Input
+                                type="email"
+                                placeholder="Digite seu e-mail"
+                                autocomplete="email"
+                                class="rounded-full h-[42px] px-[13px] border-input-outline"
+                                v-bind="componentField"
+                            />
+                        </FormControl>
+                        <FormMessage class="text-xs" />
+                    </FormItem>
+                </FormField>
 
                 <Button
                     type="submit"
+                    :disabled="isResettingPassword"
                     class="w-full h-[40px] rounded-full bg-white px-[7px] text-auth-cta text-on-light hover:bg-white/90"
                 >
-                    Enviar link
+                    {{ isResettingPassword ? "Enviando..." : "Enviar link" }}
                 </Button>
 
                 <div class="text-center">
