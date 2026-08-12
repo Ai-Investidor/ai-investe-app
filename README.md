@@ -61,3 +61,5 @@ bun test:e2e tests/example.spec.ts
 # Runs the tests in debug mode
 bun test:e2e --debug
 ```
+
+Ainda em desenvolvimento
