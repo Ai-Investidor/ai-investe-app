@@ -62,11 +62,31 @@ function createUiMessage(role, text, metadata = {}) {
   };
 }
 
+function buildHistoryParts(row) {
+  const parts = [];
+
+  if (row.content) {
+    parts.push({ type: "text", text: row.content });
+  }
+
+  for (const call of row.tool_calls ?? []) {
+    parts.push({
+      type: `tool-${call.toolName}`,
+      toolCallId: call.toolCallId,
+      state: "output-available",
+      input: call.input,
+      output: call.output,
+    });
+  }
+
+  return parts;
+}
+
 function mapHistoryMessages(rows = []) {
   return rows.map((row) => ({
     id: row.id ?? crypto.randomUUID(),
     role: row.role,
-    parts: [{ type: "text", text: row.content }],
+    parts: buildHistoryParts(row),
     metadata: {
       time: row.created_at
         ? formatTime(new Date(row.created_at))
