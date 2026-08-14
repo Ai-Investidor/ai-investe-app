@@ -70,6 +70,7 @@ function shouldStreamTextPart(index) {
 			<ChatGenerativeToolPart
 				v-else-if="isToolPart(part)"
 				:part="part"
+				:streaming="streaming"
 			/>
 
 			<ChatMarkdown
